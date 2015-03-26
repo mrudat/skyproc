@@ -12,77 +12,78 @@ import java.util.ArrayList;
  */
 public class DLVW extends MajorRecord {
 
-    static final SubPrototype DLVWprototype = new SubPrototype(MajorRecord.majorProto) {
+	static final SubPrototype DLVWprototype = new SubPrototype(
+			MajorRecord.majorProto) {
+
+		@Override
+		protected void addRecords() {
+			add(new SubForm("QNAM"));
+			add(new SubList<>(new SubForm("BNAM")));
+			add(new SubList<>(new SubForm("TNAM")));
+			add(new SubData("ENAM"));
+			add(new SubData("DNAM"));
+		}
+	};
+
+	DLVW() {
+		super();
+		subRecords.setPrototype(DLVWprototype);
+	}
 
 	@Override
-	protected void addRecords() {
-	    add(new SubForm("QNAM"));
-	    add(new SubList<>(new SubForm("BNAM")));
-	    add(new SubList<>(new SubForm("TNAM")));
-	    add(new SubData("ENAM"));
-	    add(new SubData("DNAM"));
+	DLVW getNew() {
+		return new DLVW();
 	}
-    };
 
-    DLVW() {
-	super();
-	subRecords.setPrototype(DLVWprototype);
-    }
+	@Override
+	ArrayList<String> getTypes() {
+		return Record.getTypeList("DLVW");
+	}
 
-    @Override
-    Record getNew() {
-	return new DLVW();
-    }
+	/**
+	 *
+	 * @param quest
+	 */
+	public void setQuest(FormID quest) {
+		subRecords.setSubForm("QNAM", quest);
+	}
 
-    @Override
-    ArrayList<String> getTypes() {
-	return Record.getTypeList("DLVW");
-    }
+	/**
+	 *
+	 * @return
+	 */
+	public FormID getQuest() {
+		return subRecords.getSubForm("QNAM").getForm();
+	}
 
-    /**
-     *
-     * @param quest
-     */
-    public void setQuest(FormID quest) {
-	subRecords.setSubForm("QNAM", quest);
-    }
+	/**
+	 *
+	 * @return
+	 */
+	public ArrayList<FormID> getBranches() {
+		return subRecords.getSubList("BNAM").toPublic();
+	}
 
-    /**
-     *
-     * @return
-     */
-    public FormID getQuest() {
-	return subRecords.getSubForm("QNAM").getForm();
-    }
+	/**
+	 * 
+	 * @param dialogBranch
+	 */
+	public void addBranch(FormID dialogBranch) {
+		subRecords.getSubList("BNAM").add(dialogBranch);
+	}
 
-    /**
-     *
-     * @return
-     */
-    public ArrayList<FormID> getBranches () {
-	return subRecords.getSubList("BNAM").toPublic();
-    }
+	/**
+	 * 
+	 * @param dialogBranch
+	 */
+	public void removeBranch(FormID dialogBranch) {
+		subRecords.getSubList("BNAM").remove(dialogBranch);
+	}
 
-    /**
-     * 
-     * @param dialogBranch
-     */
-    public void addBranch(FormID dialogBranch) {
-	subRecords.getSubList("BNAM").add(dialogBranch);
-    }
-
-    /**
-     * 
-     * @param dialogBranch
-     */
-    public void removeBranch(FormID dialogBranch) {
-	subRecords.getSubList("BNAM").remove(dialogBranch);
-    }
-
-    /**
+	/**
      * 
      */
-    public void clearBranches() {
-	subRecords.getSubList("BNAM").clear();
-    }
+	public void clearBranches() {
+		subRecords.getSubList("BNAM").clear();
+	}
 }

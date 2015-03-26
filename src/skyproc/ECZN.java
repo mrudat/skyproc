@@ -21,240 +21,246 @@ import skyproc.exceptions.BadRecord;
  */
 public class ECZN extends MajorRecord {
 
-    // Static prototypes and definitions
-    static final SubPrototype ECZNproto = new SubPrototype(MajorRecord.majorProto) {
-	@Override
-	protected void addRecords() {
-	    add(new DATA());
+	// Static prototypes and definitions
+	static final SubPrototype ECZNproto = new SubPrototype(
+			MajorRecord.majorProto) {
+		@Override
+		protected void addRecords() {
+			add(new DATA());
+		}
+	};
+
+	static final class DATA extends SubRecord implements Serializable {
+
+		private FormID owner = new FormID();
+		private FormID location = new FormID();
+		private int rank = 0;
+		private int minLevel = 0;
+		LFlags flags = new LFlags(1);
+		private int maxLevel = 0;
+		private boolean valid = true;
+
+		DATA() {
+			super();
+			valid = false;
+		}
+
+		@Override
+		SubRecord getNew(String type) {
+			return new DATA();
+		}
+
+		@Override
+		final void parseData(LImport in, Mod srcMod) throws BadRecord,
+				DataFormatException, BadParameter {
+			super.parseData(in, srcMod);
+
+			owner.parseData(in, srcMod);
+			location.parseData(in, srcMod);
+			if (!in.isDone()) {
+				rank = in.extractInt(1);
+				minLevel = in.extractInt(1);
+				flags.set(in.extract(1));
+				maxLevel = in.extractInt(1);
+			}
+			if (logging()) {
+				logMod(srcMod, "", "DATA record: ");
+				logMod(srcMod, "", "  " + "Owner: " + owner.getFormStr()
+						+ ", Location: " + location.getFormStr());
+				logMod(srcMod, "", "  " + "Required Rank: " + rank
+						+ ", Minimum Level: " + minLevel);
+				logMod(srcMod, "", "  " + "Max Level: " + maxLevel
+						+ ", Flags: " + flags);
+			}
+
+			valid = true;
+		}
+
+		@Override
+		void export(ModExporter out) throws IOException {
+			super.export(out);
+			if (isValid()) {
+				owner.export(out);
+				location.export(out);
+				out.write(rank, 1);
+				out.write(minLevel, 1);
+				out.write(flags.export(), 1);
+				out.write(maxLevel, 1);
+			}
+		}
+
+		@Override
+		boolean isValid() {
+			return valid;
+		}
+
+		@Override
+		int getContentLength(ModExporter out) {
+			if (isValid()) {
+				return 12;
+			} else {
+				return 0;
+			}
+		}
+
+		@Override
+		ArrayList<FormID> allFormIDs() {
+			ArrayList<FormID> out = new ArrayList<>(2);
+			out.add(owner);
+			out.add(location);
+			return out;
+		}
+
+		@Override
+		ArrayList<String> getTypes() {
+			return Record.getTypeList("DATA");
+		}
 	}
-    };
-    static final class DATA extends SubRecord implements Serializable {
 
-	private FormID owner = new FormID();
-	private FormID location = new FormID();
-	private int rank = 0;
-	private int minLevel = 0;
-	LFlags flags = new LFlags(1);
-	private int maxLevel = 0;
-	private boolean valid = true;
+	// Enums
+	/**
+     *
+     */
+	public enum ECZNFlags {
 
-	DATA() {
-	    super();
-	    valid = false;
+		/**
+	 *
+	 */
+		NeverResets(1),
+		/**
+	 *
+	 */
+		MatchPCBelowMin(2),
+		/**
+	 *
+	 */
+		DisableCombatBoundary(4), ;
+		int value;
+
+		ECZNFlags(int value) {
+			this.value = value;
+		}
 	}
 
-	@Override
-	SubRecord getNew(String type) {
-	    return new DATA();
-	}
-
-	@Override
-	final void parseData(LImport in, Mod srcMod) throws BadRecord, DataFormatException, BadParameter {
-	    super.parseData(in, srcMod);
-
-	    owner.parseData(in, srcMod);
-	    location.parseData(in, srcMod);
-	    if (!in.isDone()) {
-		rank = in.extractInt(1);
-		minLevel = in.extractInt(1);
-		flags.set(in.extract(1));
-		maxLevel = in.extractInt(1);
-	    }
-	    if (logging()) {
-		logMod(srcMod, "", "DATA record: ");
-		logMod(srcMod, "", "  " + "Owner: " + owner.getFormStr() + ", Location: " + location.getFormStr());
-		logMod(srcMod, "", "  " + "Required Rank: " + rank + ", Minimum Level: " + minLevel);
-		logMod(srcMod, "", "  " + "Max Level: " + maxLevel + ", Flags: " + flags);
-	    }
-
-	    valid = true;
-	}
-
-	@Override
-	void export(ModExporter out) throws IOException {
-	    super.export(out);
-	    if (isValid()) {
-		owner.export(out);
-		location.export(out);
-		out.write(rank, 1);
-		out.write(minLevel, 1);
-		out.write(flags.export(), 1);
-		out.write(maxLevel, 1);
-	    }
-	}
-
-	@Override
-	boolean isValid() {
-	    return valid;
-	}
-
-	@Override
-	int getContentLength(ModExporter out) {
-	    if (isValid()) {
-		return 12;
-	    } else {
-		return 0;
-	    }
-	}
-
-	@Override
-	ArrayList<FormID> allFormIDs() {
-	    ArrayList<FormID> out = new ArrayList<>(2);
-	    out.add(owner);
-	    out.add(location);
-	    return out;
+	// Common Functions
+	/**
+	 * Creates a new ECZN record.
+	 */
+	ECZN() {
+		super();
+		subRecords.setPrototype(ECZNproto);
 	}
 
 	@Override
 	ArrayList<String> getTypes() {
-	    return Record.getTypeList("DATA");
+		return Record.getTypeList("ECZN");
 	}
-    }
 
-    // Enums
-    /**
-     *
-     */
-    public enum ECZNFlags {
-
-	/**
-	 *
-	 */
-	NeverResets(1),
-	/**
-	 *
-	 */
-	MatchPCBelowMin(2),
-	/**
-	 *
-	 */
-	DisableCombatBoundary(4),;
-	int value;
-
-	ECZNFlags(int value) {
-	    this.value = value;
+	@Override
+	ECZN getNew() {
+		return new ECZN();
 	}
-    }
 
-    // Common Functions
-    /**
-     * Creates a new ECZN record.
-     */
-    ECZN() {
-	super();
-	subRecords.setPrototype(ECZNproto);
-    }
+	// Get/set
+	DATA getDATA() {
+		return (DATA) subRecords.get("DATA");
+	}
 
-    @Override
-    ArrayList<String> getTypes() {
-	return Record.getTypeList("ECZN");
-    }
+	/**
+	 *
+	 * @param flag
+	 * @return
+	 */
+	public boolean get(ECZNFlags flag) {
+		return getDATA().flags.get(flag.value);
+	}
 
-    @Override
-    Record getNew() {
-	return new ECZN();
-    }
+	/**
+	 *
+	 * @param flag
+	 * @param on
+	 */
+	public void set(ECZNFlags flag, boolean on) {
+		getDATA().flags.set(flag.value, on);
+	}
 
-    // Get/set
-    DATA getDATA() {
-	return (DATA) subRecords.get("DATA");
-    }
+	/**
+	 *
+	 * @return
+	 */
+	public FormID getLocation() {
+		return getDATA().location;
+	}
 
-    /**
-     *
-     * @param flag
-     * @return
-     */
-    public boolean get(ECZNFlags flag) {
-	return getDATA().flags.get(flag.value);
-    }
+	/**
+	 *
+	 * @param location
+	 */
+	public void setLocation(FormID location) {
+		getDATA().location = location;
+	}
 
-    /**
-     *
-     * @param flag
-     * @param on
-     */
-    public void set(ECZNFlags flag, boolean on) {
-	getDATA().flags.set(flag.value, on);
-    }
+	/**
+	 *
+	 * @return
+	 */
+	public int getMaxLevel() {
+		return getDATA().maxLevel;
+	}
 
-    /**
-     *
-     * @return
-     */
-    public FormID getLocation() {
-	return getDATA().location;
-    }
+	/**
+	 *
+	 * @param maxLevel
+	 */
+	public void setMaxLevel(int maxLevel) {
+		getDATA().maxLevel = maxLevel;
+	}
 
-    /**
-     *
-     * @param location
-     */
-    public void setLocation(FormID location) {
-	getDATA().location = location;
-    }
+	/**
+	 *
+	 * @return
+	 */
+	public int getMinLevel() {
+		return getDATA().minLevel;
+	}
 
-    /**
-     *
-     * @return
-     */
-    public int getMaxLevel() {
-	return getDATA().maxLevel;
-    }
+	/**
+	 *
+	 * @param minLevel
+	 */
+	public void setMinLevel(int minLevel) {
+		getDATA().minLevel = minLevel;
+	}
 
-    /**
-     *
-     * @param maxLevel
-     */
-    public void setMaxLevel(int maxLevel) {
-	getDATA().maxLevel = maxLevel;
-    }
+	/**
+	 *
+	 * @return
+	 */
+	public FormID getOwner() {
+		return getDATA().owner;
+	}
 
-    /**
-     *
-     * @return
-     */
-    public int getMinLevel() {
-	return getDATA().minLevel;
-    }
+	/**
+	 *
+	 * @param owner
+	 */
+	public void setOwner(FormID owner) {
+		getDATA().owner = owner;
+	}
 
-    /**
-     *
-     * @param minLevel
-     */
-    public void setMinLevel(int minLevel) {
-	getDATA().minLevel = minLevel;
-    }
+	/**
+	 *
+	 * @return
+	 */
+	public int getRank() {
+		return getDATA().rank;
+	}
 
-    /**
-     *
-     * @return
-     */
-    public FormID getOwner() {
-	return getDATA().owner;
-    }
-
-    /**
-     *
-     * @param owner
-     */
-    public void setOwner(FormID owner) {
-	getDATA().owner = owner;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public int getRank() {
-	return getDATA().rank;
-    }
-
-    /**
-     *
-     * @param rank
-     */
-    public void setRank(int rank) {
-	getDATA().rank = rank;
-    }
+	/**
+	 *
+	 * @param rank
+	 */
+	public void setRank(int rank) {
+		getDATA().rank = rank;
+	}
 }

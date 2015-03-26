@@ -19,227 +19,230 @@ import skyproc.exceptions.BadRecord;
  */
 public class MISC extends MajorRecordNamed {
 
-    // Static prototypes and definitions
-    static final SubPrototype MISCproto = new SubPrototype(MajorRecordNamed.namedProto) {
+	// Static prototypes and definitions
+	static final SubPrototype MISCproto = new SubPrototype(
+			MajorRecordNamed.namedProto) {
 
-	@Override
-	protected void addRecords() {
-	    after(new ScriptPackage(), "EDID");
-	    add(new SubData("OBND", new byte[12]));
-	    reposition("FULL");
-	    add(new Model());
-	    add(SubString.getNew("ICON", true));
-	    add(new SubForm("YNAM"));
-	    add(new SubForm("ZNAM"));
-	    add(new KeywordSet());
-	    add(new DATA());
-	    add(SubString.getNew("MICO", true));
-	    add(new DestructionData());
+		@Override
+		protected void addRecords() {
+			after(new ScriptPackage(), "EDID");
+			add(new SubData("OBND", new byte[12]));
+			reposition("FULL");
+			add(new Model());
+			add(SubString.getNew("ICON", true));
+			add(new SubForm("YNAM"));
+			add(new SubForm("ZNAM"));
+			add(new KeywordSet());
+			add(new DATA());
+			add(SubString.getNew("MICO", true));
+			add(new DestructionData());
+		}
+	};
+
+	static class DATA extends SubRecord {
+
+		int value = 0;
+		float weight = 0;
+
+		DATA() {
+			super();
+		}
+
+		@Override
+		void export(ModExporter out) throws IOException {
+			super.export(out);
+			out.write(value);
+			out.write(weight);
+		}
+
+		@Override
+		void parseData(LImport in, Mod srcMod) throws BadRecord,
+				DataFormatException, BadParameter {
+			super.parseData(in, srcMod);
+			value = in.extractInt(4);
+			weight = in.extractFloat();
+			if (SPGlobal.logging()) {
+				logMod(srcMod, "", "Setting DATA:    Weight: " + weight);
+			}
+		}
+
+		@Override
+		SubRecord getNew(String type) {
+			return new MISC.DATA();
+		}
+
+		@Override
+		int getContentLength(ModExporter out) {
+			return 8;
+		}
+
+		@Override
+		ArrayList<String> getTypes() {
+			return Record.getTypeList("DATA");
+		}
 	}
-    };
-    static class DATA extends SubRecord {
 
-	int value = 0;
-	float weight = 0;
-
-	DATA() {
-	    super();
-	}
-
-	@Override
-	void export(ModExporter out) throws IOException {
-	    super.export(out);
-	    out.write(value);
-	    out.write(weight);
-	}
-
-	@Override
-	void parseData(LImport in, Mod srcMod) throws BadRecord, DataFormatException, BadParameter {
-	    super.parseData(in, srcMod);
-	    value = in.extractInt(4);
-	    weight = in.extractFloat();
-	    if (SPGlobal.logging()) {
-		logMod(srcMod, "", "Setting DATA:    Weight: " + weight);
-	    }
-	}
-
-	@Override
-	SubRecord getNew(String type) {
-	    return new MISC.DATA();
-	}
-
-	@Override
-	int getContentLength(ModExporter out) {
-	    return 8;
+	// Common Functions
+	MISC() {
+		super();
+		subRecords.setPrototype(MISCproto);
 	}
 
 	@Override
 	ArrayList<String> getTypes() {
-	    return Record.getTypeList("DATA");
+		return Record.getTypeList("MISC");
 	}
-    }
 
-    // Common Functions
-    MISC() {
-	super();
-	subRecords.setPrototype(MISCproto);
-    }
+	@Override
+	MISC getNew() {
+		return new MISC();
+	}
 
-    @Override
-    ArrayList<String> getTypes() {
-	return Record.getTypeList("MISC");
-    }
+	/**
+	 * @deprecated use getModelData()
+	 * @param path
+	 */
+	public void setModel(String path) {
+		subRecords.getModel().setFileName(path);
+	}
 
-    @Override
-    Record getNew() {
-	return new MISC();
-    }
+	/**
+	 * @deprecated use getModelData()
+	 * @return
+	 */
+	public String getModel() {
+		return subRecords.getModel().getFileName();
+	}
 
-    /**
-     * @deprecated use getModelData()
-     * @param path
-     */
-    public void setModel(String path) {
-	subRecords.getModel().setFileName(path);
-    }
+	DATA getDATA() {
+		return (DATA) subRecords.get("DATA");
+	}
 
-    /**
-     * @deprecated use getModelData()
-     * @return
-     */
-    public String getModel() {
-	return subRecords.getModel().getFileName();
-    }
+	/**
+	 *
+	 * @param value
+	 */
+	public void setValue(int value) {
+		getDATA().value = value;
+	}
 
-    DATA getDATA() {
-	return (DATA) subRecords.get("DATA");
-    }
+	/**
+	 *
+	 * @return
+	 */
+	public int getValue() {
+		return getDATA().value;
+	}
 
-    /**
-     *
-     * @param value
-     */
-    public void setValue(int value) {
-	getDATA().value = value;
-    }
+	/**
+	 *
+	 * @param weight
+	 */
+	public void setWeight(float weight) {
+		getDATA().weight = weight;
+	}
 
-    /**
-     *
-     * @return
-     */
-    public int getValue() {
-	return getDATA().value;
-    }
+	/**
+	 *
+	 * @return
+	 */
+	public float getWeight() {
+		return getDATA().weight;
+	}
 
-    /**
-     *
-     * @param weight
-     */
-    public void setWeight(float weight) {
-	getDATA().weight = weight;
-    }
+	/**
+	 *
+	 * @return
+	 */
+	public KeywordSet getKeywordSet() {
+		return subRecords.getKeywords();
+	}
 
-    /**
-     *
-     * @return
-     */
-    public float getWeight() {
-	return getDATA().weight;
-    }
+	/**
+	 *
+	 * @return
+	 */
+	public ScriptPackage getScriptPackage() {
+		return subRecords.getScripts();
+	}
 
-    /**
-     *
-     * @return
-     */
-    public KeywordSet getKeywordSet() {
-	return subRecords.getKeywords();
-    }
+	/**
+	 * @deprecated use getModelData()
+	 * @return List of the AltTextures applied.
+	 */
+	public ArrayList<AltTextures.AltTexture> getAltTextures() {
+		return subRecords.getModel().getAltTextures();
+	}
 
-    /**
-     *
-     * @return
-     */
-    public ScriptPackage getScriptPackage() {
-	return subRecords.getScripts();
-    }
+	/**
+	 * 
+	 * @return
+	 */
+	public Model getModelData() {
+		return subRecords.getModel();
+	}
 
-    /**
-     * @deprecated use getModelData()
-     * @return List of the AltTextures applied.
-     */
-    public ArrayList<AltTextures.AltTexture> getAltTextures() {
-	return subRecords.getModel().getAltTextures();
-    }
+	/**
+	 *
+	 * @param sound
+	 */
+	public void setPickupSound(FormID sound) {
+		subRecords.setSubForm("YNAM", sound);
+	}
 
-    /**
-     * 
-     * @return
-     */
-    public Model getModelData() {
-	return subRecords.getModel();
-    }
+	/**
+	 *
+	 * @return
+	 */
+	public FormID getPickupSound() {
+		return subRecords.getSubForm("YNAM").getForm();
+	}
 
-    /**
-     *
-     * @param sound
-     */
-    public void setPickupSound(FormID sound) {
-	subRecords.setSubForm("YNAM", sound);
-    }
+	/**
+	 *
+	 * @param sound
+	 */
+	public void setDropSound(FormID sound) {
+		subRecords.setSubForm("ZNAM", sound);
+	}
 
-    /**
-     *
-     * @return
-     */
-    public FormID getPickupSound() {
-	return subRecords.getSubForm("YNAM").getForm();
-    }
+	/**
+	 *
+	 * @return
+	 */
+	public FormID getDropSound() {
+		return subRecords.getSubForm("ZNAM").getForm();
+	}
 
-    /**
-     *
-     * @param sound
-     */
-    public void setDropSound(FormID sound) {
-	subRecords.setSubForm("ZNAM", sound);
-    }
+	/**
+	 *
+	 * @param path
+	 */
+	public void setInventoryImage(String path) {
+		subRecords.setSubString("ICON", path);
+	}
 
-    /**
-     *
-     * @return
-     */
-    public FormID getDropSound() {
-	return subRecords.getSubForm("ZNAM").getForm();
-    }
+	/**
+	 *
+	 * @return
+	 */
+	public String getInventoryImage() {
+		return subRecords.getSubString("ICON").print();
+	}
 
-    /**
-     *
-     * @param path
-     */
-    public void setInventoryImage(String path) {
-	subRecords.setSubString("ICON", path);
-    }
+	/**
+	 *
+	 * @param path
+	 */
+	public void setMessageImage(String path) {
+		subRecords.setSubString("MICO", path);
+	}
 
-    /**
-     *
-     * @return
-     */
-    public String getInventoryImage() {
-	return subRecords.getSubString("ICON").print();
-    }
-
-    /**
-     *
-     * @param path
-     */
-    public void setMessageImage(String path) {
-	subRecords.setSubString("MICO", path);
-    }
-
-    /**
-     *
-     * @return
-     */
-    public String getMessageImage() {
-	return subRecords.getSubString("MICO").print();
-    }
+	/**
+	 *
+	 * @return
+	 */
+	public String getMessageImage() {
+		return subRecords.getSubString("MICO").print();
+	}
 }

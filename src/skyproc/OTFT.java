@@ -12,69 +12,70 @@ import java.util.ArrayList;
  */
 public class OTFT extends MajorRecord {
 
-    // Static prototypes and definitions
-    static final SubPrototype OTFTproto = new SubPrototype(MajorRecord.majorProto){
+	// Static prototypes and definitions
+	static final SubPrototype OTFTproto = new SubPrototype(
+			MajorRecord.majorProto) {
+
+		@Override
+		protected void addRecords() {
+			add(new SubFormArray("INAM", 0));
+		}
+	};
+
+	// Common Functions
+	OTFT() {
+		super();
+		subRecords.setPrototype(OTFTproto);
+	}
+
+	/**
+	 *
+	 * @param uniqueEDID
+	 */
+	public OTFT(String uniqueEDID) {
+		this();
+		originateFromPatch(uniqueEDID);
+	}
 
 	@Override
-	protected void addRecords() {
-	    add(new SubFormArray("INAM", 0));
+	ArrayList<String> getTypes() {
+		return Record.getTypeList("OTFT");
 	}
-    };
 
-    // Common Functions
-    OTFT() {
-	super();
-	subRecords.setPrototype(OTFTproto);
-    }
+	@Override
+	OTFT getNew() {
+		return new OTFT();
+	}
 
-    /**
-     *
-     * @param uniqueEDID
-     */
-    public OTFT(String uniqueEDID) {
-	this();
-	originateFromPatch(uniqueEDID);
-    }
+	// Get/Set
+	/**
+	 *
+	 * @return
+	 */
+	public ArrayList<FormID> getInventoryList() {
+		return subRecords.get("INAM").allFormIDs();
+	}
 
-    @Override
-    ArrayList<String> getTypes() {
-	return Record.getTypeList("OTFT");
-    }
+	/**
+	 *
+	 * @param item
+	 */
+	public void addInventoryItem(FormID item) {
+		subRecords.getSubFormArray("INAM").add(item);
+	}
 
-    @Override
-    Record getNew() {
-	return new OTFT();
-    }
+	/**
+	 *
+	 * @param item
+	 */
+	public void removeInventoryItem(FormID item) {
+		subRecords.getSubFormArray("INAM").remove(item);
+	}
 
-    // Get/Set
-    /**
-     *
-     * @return
-     */
-    public ArrayList<FormID> getInventoryList() {
-	return subRecords.get("INAM").allFormIDs();
-    }
-
-    /**
-     *
-     * @param item
-     */
-    public void addInventoryItem(FormID item) {
-	subRecords.getSubFormArray("INAM").add(item);
-    }
-
-    /**
-     *
-     * @param item
-     */
-    public void removeInventoryItem (FormID item) {
-	subRecords.getSubFormArray("INAM").remove(item);
-    }
-
-    /**
+	/**
      *
      */
-    public void clearInventoryItems() {
-	subRecords.getSubFormArray("INAM").clear();
-    }
+	public void clearInventoryItems() {
+		subRecords.getSubFormArray("INAM").clear();
+	}
 }

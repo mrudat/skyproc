@@ -36,7 +36,7 @@ public class CONT extends MajorRecordNamed {
     }
 
     @Override
-    Record getNew() {
+    CONT getNew() {
 	return new CONT();
     }
 

@@ -20,320 +20,328 @@ import skyproc.exceptions.BadRecord;
  */
 public class ALCH extends MagicItem {
 
-    // Static prototypes and definitions
-    static final SubPrototype ALCHproto = new SubPrototype(MagicItem.magicItemProto) {
+	// Static prototypes and definitions
+	static final SubPrototype ALCHproto = new SubPrototype(
+			MagicItem.magicItemProto) {
 
-	@Override
-	protected void addRecords() {
-	    remove("DESC");
-	    add(new Model());
-	    add(new SubForm("YNAM"));
-	    add(new SubForm("ZNAM"));
-	    add(new SubFloat("DATA"));
-	    add(new ENIT());
-	    add(SubString.getNew("ICON", true));
-	    add(SubString.getNew("MICO", true));
-	    add(new SubForm("ETYP"));
-	    reposition("EFID");
+		@Override
+		protected void addRecords() {
+			remove("DESC");
+			add(new Model());
+			add(new SubForm("YNAM"));
+			add(new SubForm("ZNAM"));
+			add(new SubFloat("DATA"));
+			add(new ENIT());
+			add(SubString.getNew("ICON", true));
+			add(SubString.getNew("MICO", true));
+			add(new SubForm("ETYP"));
+			reposition("EFID");
+		}
+	};
+
+	static final class ENIT extends SubRecord {
+
+		int value = 0;
+		LFlags flags = new LFlags(4);
+		FormID addiction = new FormID();
+		byte[] addictionChance = new byte[4];
+		FormID useSound = new FormID();
+
+		ENIT() {
+			super();
+		}
+
+		@Override
+		void export(ModExporter out) throws IOException {
+			super.export(out);
+			out.write(value);
+			out.write(flags.export());
+			addiction.export(out);
+			out.write(addictionChance, 4);
+			useSound.export(out);
+		}
+
+		@Override
+		void parseData(LImport in, Mod srcMod) throws BadRecord,
+				DataFormatException, BadParameter {
+			super.parseData(in, srcMod);
+			value = in.extractInt(4);
+			flags.set(in.extract(4));
+			addiction.parseData(in, srcMod);
+			addictionChance = in.extract(4);
+			useSound.parseData(in, srcMod);
+		}
+
+		@Override
+		ArrayList<FormID> allFormIDs() {
+			ArrayList<FormID> out = new ArrayList<>(2);
+			out.add(addiction);
+			out.add(useSound);
+			return out;
+		}
+
+		@Override
+		SubRecord getNew(String type) {
+			return new ENIT();
+		}
+
+		@Override
+		int getContentLength(ModExporter out) {
+			return 20;
+		}
+
+		@Override
+		ArrayList<String> getTypes() {
+			return Record.getTypeList("ENIT");
+		}
 	}
-    };
-    static final class ENIT extends SubRecord {
 
-	int value = 0;
-	LFlags flags = new LFlags(4);
-	FormID addiction = new FormID();
-	byte[] addictionChance = new byte[4];
-	FormID useSound = new FormID();
+	// Enums
+	/**
+     *
+     */
+	public enum ALCHFlag {
 
-	ENIT() {
-	    super();
+		/**
+	 *
+	 */
+		ManualCalc(0),
+		/**
+	 *
+	 */
+		Food(1),
+		/**
+	 *
+	 */
+		Medicine(16),
+		/**
+	 *
+	 */
+		Poison(17);
+		int value;
+
+		ALCHFlag(int in) {
+			value = in;
+		}
 	}
 
-	@Override
-	void export(ModExporter out) throws IOException {
-	    super.export(out);
-	    out.write(value);
-	    out.write(flags.export());
-	    addiction.export(out);
-	    out.write(addictionChance, 4);
-	    useSound.export(out);
-	}
-
-	@Override
-	void parseData(LImport in, Mod srcMod) throws BadRecord, DataFormatException, BadParameter {
-	    super.parseData(in, srcMod);
-	    value = in.extractInt(4);
-	    flags.set(in.extract(4));
-	    addiction.parseData(in, srcMod);
-	    addictionChance = in.extract(4);
-	    useSound.parseData(in, srcMod);
-	}
-
-	@Override
-	ArrayList<FormID> allFormIDs() {
-	    ArrayList<FormID> out = new ArrayList<>(2);
-	    out.add(addiction);
-	    out.add(useSound);
-	    return out;
-	}
-
-	@Override
-	SubRecord getNew(String type) {
-	    return new ENIT();
-	}
-
-	@Override
-	int getContentLength(ModExporter out) {
-	    return 20;
+	// Common Functions
+	ALCH() {
+		super();
+		subRecords.setPrototype(ALCHproto);
 	}
 
 	@Override
 	ArrayList<String> getTypes() {
-	    return Record.getTypeList("ENIT");
+		return Record.getTypeList("ALCH");
 	}
-    }
 
-    // Enums
-    /**
-     *
-     */
-    public enum ALCHFlag {
-
-	/**
-	 *
-	 */
-	ManualCalc(0),
-	/**
-	 *
-	 */
-	Food(1),
-	/**
-	 *
-	 */
-	Medicine(16),
-	/**
-	 *
-	 */
-	Poison(17);
-	int value;
-
-	ALCHFlag(int in) {
-	    value = in;
+	@Override
+	ALCH getNew() {
+		return new ALCH();
 	}
-    }
 
-    // Common Functions
-    ALCH() {
-	super();
-	subRecords.setPrototype(ALCHproto);
-    }
+	@Override
+	ALCH getNewMajorRecord() {
+		return new ALCH();
+	}
 
-    @Override
-    ArrayList<String> getTypes() {
-	return Record.getTypeList("ALCH");
-    }
+	// Get / set
+	/**
+	 * @deprecated use getModelData()
+	 * @param groundModel
+	 */
+	public void setModel(String groundModel) {
+		subRecords.getModel().setFileName(groundModel);
+	}
 
-    @Override
-    Record getNew() {
-	return new ALCH();
-    }
+	/**
+	 * @deprecated use getModelData()
+	 * @return
+	 */
+	public String getModel() {
+		return subRecords.getModel().getFileName();
+	}
 
-    // Get / set
-    /**
-     * @deprecated use getModelData()
-     * @param groundModel
-     */
-    public void setModel(String groundModel) {
-	subRecords.getModel().setFileName(groundModel);
-    }
+	/**
+	 *
+	 * @param pickupSound
+	 */
+	public void setPickupSound(FormID pickupSound) {
+		subRecords.setSubForm("YNAM", pickupSound);
+	}
 
-    /**
-     * @deprecated use getModelData()
-     * @return
-     */
-    public String getModel() {
-	return subRecords.getModel().getFileName();
-    }
+	/**
+	 *
+	 * @return
+	 */
+	public FormID getPickupSound() {
+		return subRecords.getSubForm("YNAM").getForm();
+	}
 
-    /**
-     *
-     * @param pickupSound
-     */
-    public void setPickupSound(FormID pickupSound) {
-	subRecords.setSubForm("YNAM", pickupSound);
-    }
+	/**
+	 *
+	 * @param dropSound
+	 */
+	public void setDropSound(FormID dropSound) {
+		subRecords.setSubForm("ZNAM", dropSound);
+	}
 
-    /**
-     *
-     * @return
-     */
-    public FormID getPickupSound() {
-	return subRecords.getSubForm("YNAM").getForm();
-    }
+	/**
+	 *
+	 * @return
+	 */
+	public FormID getDropSound() {
+		return subRecords.getSubForm("ZNAM").getForm();
+	}
 
-    /**
-     *
-     * @param dropSound
-     */
-    public void setDropSound(FormID dropSound) {
-	subRecords.setSubForm("ZNAM", dropSound);
-    }
+	ENIT getEnit() {
+		return (ENIT) subRecords.get("ENIT");
+	}
 
-    /**
-     *
-     * @return
-     */
-    public FormID getDropSound() {
-	return subRecords.getSubForm("ZNAM").getForm();
-    }
+	/**
+	 *
+	 * @param value
+	 */
+	public void setValue(int value) {
+		getEnit().value = value;
+	}
 
-    ENIT getEnit() {
-	return (ENIT) subRecords.get("ENIT");
-    }
+	/**
+	 *
+	 * @return
+	 */
+	public int getValue() {
+		return getEnit().value;
+	}
 
-    /**
-     *
-     * @param value
-     */
-    public void setValue(int value) {
-	getEnit().value = value;
-    }
+	/**
+	 *
+	 * @param flag
+	 * @param on
+	 */
+	public void set(ALCHFlag flag, boolean on) {
+		getEnit().flags.set(flag.value, on);
+	}
 
-    /**
-     *
-     * @return
-     */
-    public int getValue() {
-	return getEnit().value;
-    }
+	/**
+	 *
+	 * @param flag
+	 * @return
+	 */
+	public boolean get(ALCHFlag flag) {
+		return getEnit().flags.get(flag.value);
+	}
 
-    /**
-     *
-     * @param flag
-     * @param on
-     */
-    public void set(ALCHFlag flag, boolean on) {
-	getEnit().flags.set(flag.value, on);
-    }
+	/**
+	 *
+	 * @param addiction
+	 */
+	public void setAddiction(FormID addiction) {
+		getEnit().addiction = addiction;
+	}
 
-    /**
-     *
-     * @param flag
-     * @return
-     */
-    public boolean get(ALCHFlag flag) {
-	return getEnit().flags.get(flag.value);
-    }
+	/**
+	 *
+	 * @return
+	 */
+	public FormID getAddiction() {
+		return getEnit().addiction;
+	}
 
-    /**
-     *
-     * @param addiction
-     */
-    public void setAddiction(FormID addiction) {
-	getEnit().addiction = addiction;
-    }
+	/**
+	 *
+	 * @param useSound
+	 */
+	public void setUseSound(FormID useSound) {
+		getEnit().useSound = useSound;
+	}
 
-    /**
-     *
-     * @return
-     */
-    public FormID getAddiction() {
-	return getEnit().addiction;
-    }
+	/**
+	 *
+	 * @return
+	 */
+	public FormID getUseSound() {
+		return getEnit().useSound;
+	}
 
-    /**
-     *
-     * @param useSound
-     */
-    public void setUseSound(FormID useSound) {
-	getEnit().useSound = useSound;
-    }
+	/**
+	 *
+	 * @param weight
+	 */
+	public void setWeight(float weight) {
+		subRecords.setSubFloat("DATA", weight);
+	}
 
-    /**
-     *
-     * @return
-     */
-    public FormID getUseSound() {
-	return getEnit().useSound;
-    }
+	/**
+	 *
+	 * @return
+	 */
+	public float getWeight() {
+		return subRecords.getSubFloat("DATA").get();
+	}
 
-    /**
-     *
-     * @param weight
-     */
-    public void setWeight(float weight) {
-	subRecords.setSubFloat("DATA", weight);
-    }
+	/**
+	 *
+	 * @param filename
+	 */
+	public void setInventoryIcon(String filename) {
+		subRecords.setSubString("ICON", filename);
+	}
 
-    /**
-     *
-     * @return
-     */
-    public float getWeight() {
-	return subRecords.getSubFloat("DATA").get();
-    }
+	/**
+	 *
+	 * @return
+	 */
+	public String getInventoryIcon() {
+		return subRecords.getSubString("ICON").print();
+	}
 
-    /**
-     *
-     * @param filename
-     */
-    public void setInventoryIcon(String filename) {
-	subRecords.setSubString("ICON", filename);
-    }
+	/**
+	 *
+	 * @param filename
+	 */
+	public void setMessageIcon(String filename) {
+		subRecords.setSubString("MICO", filename);
+	}
 
-    /**
-     *
-     * @return
-     */
-    public String getInventoryIcon() {
-	return subRecords.getSubString("ICON").print();
-    }
+	/**
+	 *
+	 * @return
+	 */
+	public String getMessageIcon() {
+		return subRecords.getSubString("MICO").print();
+	}
 
-    /**
-     *
-     * @param filename
-     */
-    public void setMessageIcon(String filename) {
-	subRecords.setSubString("MICO", filename);
-    }
+	/**
+	 *
+	 * @param equipType
+	 */
+	public void setEquipType(FormID equipType) {
+		subRecords.setSubForm("ETYP", equipType);
+	}
 
-    /**
-     *
-     * @return
-     */
-    public String getMessageIcon() {
-	return subRecords.getSubString("MICO").print();
-    }
+	/**
+	 *
+	 * @return
+	 */
+	public FormID getEquipType() {
+		return subRecords.getSubForm("ETYP").getForm();
+	}
 
-    /**
-     *
-     * @param equipType
-     */
-    public void setEquipType(FormID equipType) {
-	subRecords.setSubForm("ETYP", equipType);
-    }
+	/**
+	 * @deprecated use getModelData()
+	 * @return List of the AltTextures applied.
+	 */
+	public ArrayList<AltTextures.AltTexture> getAltTextures() {
+		return subRecords.getModel().getAltTextures();
+	}
 
-    /**
-     *
-     * @return
-     */
-    public FormID getEquipType() {
-	return subRecords.getSubForm("ETYP").getForm();
-    }
-
-    /**
-     * @deprecated use getModelData()
-     * @return List of the AltTextures applied.
-     */
-    public ArrayList<AltTextures.AltTexture> getAltTextures() {
-	return subRecords.getModel().getAltTextures();
-    }
-
-    /**
-     * 
-     * @return
-     */
-    public Model getModelData() {
-	return subRecords.getModel();
-    }
+	/**
+	 * 
+	 * @return
+	 */
+	public Model getModelData() {
+		return subRecords.getModel();
+	}
 }

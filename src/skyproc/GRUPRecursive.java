@@ -15,20 +15,21 @@ import skyproc.exceptions.BadRecord;
  */
 class GRUPRecursive<T extends MajorRecord> extends GRUP<T> {
 
-    GRUPRecursive(T prototype) {
-	super(prototype);
-    }
-
-    @Override
-    public MajorRecord extractMajor(LImport in, Mod srcMod) throws BadRecord, DataFormatException, BadParameter {
-	MajorRecord m = super.extractMajor(in, srcMod);
-	if (m != null && !in.isDone() && "GRUP".equals(getNextType(in))) {
-	    if (SPGlobal.logging()) {
-		SPGlobal.log("GRUPRecursive", "Extracting an appended GRUP.");
-	    }
-	    GRUP g = m.getGRUPAppend();
-	    g.parseData(g.extractRecordData(in), srcMod);
+	GRUPRecursive(T prototype) {
+		super(prototype);
 	}
-	return m;
-    }
+
+	@Override
+	public T extractMajor(LImport in, Mod srcMod) throws BadRecord,
+			DataFormatException, BadParameter {
+		T m = super.extractMajor(in, srcMod);
+		if (m != null && !in.isDone() && "GRUP".equals(getNextType(in))) {
+			if (SPGlobal.logging()) {
+				SPGlobal.log("GRUPRecursive", "Extracting an appended GRUP.");
+			}
+			GRUP<T> g = m.getGRUPAppend();
+			g.parseData(g.extractRecordData(in), srcMod);
+		}
+		return m;
+	}
 }

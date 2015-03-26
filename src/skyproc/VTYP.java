@@ -12,74 +12,75 @@ import java.util.ArrayList;
  */
 public class VTYP extends MajorRecord {
 
-    static final SubPrototype VTYPprototype = new SubPrototype(MajorRecord.majorProto) {
-	@Override
-	protected void addRecords() {
-	    add(new SubFlag("DNAM", 1));
+	static final SubPrototype VTYPprototype = new SubPrototype(
+			MajorRecord.majorProto) {
+		@Override
+		protected void addRecords() {
+			add(new SubFlag("DNAM", 1));
+		}
+	};
+
+	// Enums
+	/**
+     * 
+     */
+	public enum VoiceTypeFlag {
+		/**
+	 * 
+	 */
+		AllowDefaultDialogue,
+		/**
+	 * 
+	 */
+		Female,
 	}
-    };
 
-    // Enums
-    /**
-     * 
-     */
-    public enum VoiceTypeFlag {
+	// Common Functions
+	VTYP() {
+		super();
+		subRecords.setPrototype(VTYPprototype);
+	}
+
 	/**
 	 * 
+	 * @param edid
 	 */
-	AllowDefaultDialogue,
+	public VTYP(String edid) {
+		this();
+		originateFromPatch(edid);
+	}
+
+	@Override
+	ArrayList<String> getTypes() {
+		return Record.getTypeList("VTYP");
+	}
+
+	@Override
+	String getFormArrayStr(Boolean master) {
+		return super.getFormArrayStr(master);
+	}
+
+	@Override
+	VTYP getNew() {
+		return new VTYP();
+	}
+
+	// Get/Set
 	/**
 	 * 
+	 * @param flag
+	 * @param on
 	 */
-	Female,
-    }
+	public void set(VoiceTypeFlag flag, boolean on) {
+		subRecords.setSubFlag("DNAM", flag.ordinal(), on);
+	}
 
-    // Common Functions
-    VTYP() {
-	super();
-	subRecords.setPrototype(VTYPprototype);
-    }
-
-    /**
-     * 
-     * @param edid
-     */
-    public VTYP (String edid) {
-	this();
-	originateFromPatch(edid);
-    }
-
-    @Override
-    ArrayList<String> getTypes() {
-	return Record.getTypeList("VTYP");
-    }
-
-    @Override
-    String getFormArrayStr(Boolean master) {
-	return super.getFormArrayStr(master);
-    }
-
-    @Override
-    Record getNew() {
-	return new VTYP();
-    }
-
-    // Get/Set
-    /**
-     * 
-     * @param flag
-     * @param on
-     */
-    public void set(VoiceTypeFlag flag, boolean on) {
-	subRecords.setSubFlag("DNAM", flag.ordinal(), on);
-    }
-
-    /**
-     * 
-     * @param flag
-     * @return
-     */
-    public boolean get(VoiceTypeFlag flag) {
-	return subRecords.getSubFlag("DNAM").is(flag.ordinal());
-    }
+	/**
+	 * 
+	 * @param flag
+	 * @return
+	 */
+	public boolean get(VoiceTypeFlag flag) {
+		return subRecords.getSubFlag("DNAM").is(flag.ordinal());
+	}
 }

@@ -12,136 +12,137 @@ import java.util.ArrayList;
  */
 public class HDPT extends MajorRecordNamed {
 
-    // Static prototypes and definitions
-    static final SubPrototype HDPTproto = new SubPrototype(MajorRecordNamed.namedProto) {
-	@Override
-	protected void addRecords() {
-	    add(new Model());
-	    add(new SubData("DATA"));
-	    add(new SubInt("PNAM"));
-	    add(new SubList<>(new SubForm("HNAM")));
-	    add(new SubList<>(new SubShell(new SubPrototype() {
+	// Static prototypes and definitions
+	static final SubPrototype HDPTproto = new SubPrototype(
+			MajorRecordNamed.namedProto) {
 		@Override
 		protected void addRecords() {
-		    add(new SubInt("NAM0"));
-		    add(SubString.getNew("NAM1", true));
+			add(new Model());
+			add(new SubData("DATA"));
+			add(new SubInt("PNAM"));
+			add(new SubList<>(new SubForm("HNAM")));
+			add(new SubList<>(new SubShell(new SubPrototype() {
+				@Override
+				protected void addRecords() {
+					add(new SubInt("NAM0"));
+					add(SubString.getNew("NAM1", true));
+				}
+			})));
+			add(new SubForm("CNAM"));
+			add(new SubForm("TNAM"));
+			add(new SubForm("RNAM"));
 		}
-	    })));
-	    add(new SubForm("CNAM"));
-	    add(new SubForm("TNAM"));
-	    add(new SubForm("RNAM"));
+	};
+
+	// Common Functions
+	HDPT() {
+		super();
+		subRecords.setPrototype(HDPTproto);
 	}
-    };
 
-    // Common Functions
-    HDPT() {
-	super();
-	subRecords.setPrototype(HDPTproto);
-    }
+	@Override
+	ArrayList<String> getTypes() {
+		return Record.getTypeList("HDPT");
+	}
 
-    @Override
-    ArrayList<String> getTypes() {
-	return Record.getTypeList("HDPT");
-    }
+	@Override
+	HDPT getNew() {
+		return new HDPT();
+	}
 
-    @Override
-    Record getNew() {
-	return new HDPT();
-    }
+	// Get/Set
+	/**
+	 * @deprecated use getModelData()
+	 * @param path
+	 */
+	public void setModel(String path) {
+		subRecords.getModel().setFileName(path);
+	}
 
-    // Get/Set
-    /**
-     * @deprecated use getModelData()
-     * @param path
-     */
-    public void setModel(String path) {
-	subRecords.getModel().setFileName(path);
-    }
+	/**
+	 * @deprecated use getModelData()
+	 * @return
+	 */
+	public String getModel() {
+		return subRecords.getModel().getFileName();
+	}
 
-    /**
-     * @deprecated use getModelData()
-     * @return
-     */
-    public String getModel() {
-	return subRecords.getModel().getFileName();
-    }
+	/**
+	 *
+	 * @return
+	 */
+	public ArrayList<FormID> getHeadParts() {
+		return subRecords.getSubList("HNAM").toPublic();
+	}
 
-    /**
-     *
-     * @return
-     */
-    public ArrayList<FormID> getHeadParts() {
-	return subRecords.getSubList("HNAM").toPublic();
-    }
+	/**
+	 * 
+	 * @param id
+	 */
+	public void addHeadPart(FormID id) {
+		subRecords.getSubList("HNAM").add(id);
+	}
 
-    /**
-     * 
-     * @param id
-     */
-    public void addHeadPart(FormID id) {
-	subRecords.getSubList("HNAM").add(id);
-    }
+	/**
+	 * 
+	 * @param id
+	 */
+	public void removeHeadPart(FormID id) {
+		subRecords.getSubList("HNAM").remove(id);
+	}
 
-    /**
-     * 
-     * @param id
-     */
-    public void removeHeadPart(FormID id) {
-	subRecords.getSubList("HNAM").remove(id);
-    }
-
-    /**
+	/**
      * 
      */
-    public void clearHeadParts() {
-	subRecords.getSubList("HNAM").clear();
-    }
+	public void clearHeadParts() {
+		subRecords.getSubList("HNAM").clear();
+	}
 
-    /**
-     *
-     * @param txst
-     */
-    public void setBaseTexture(FormID txst) {
-	subRecords.setSubForm("TNAM", txst);
-    }
+	/**
+	 *
+	 * @param txst
+	 */
+	public void setBaseTexture(FormID txst) {
+		subRecords.setSubForm("TNAM", txst);
+	}
 
-    /**
-     *
-     * @return
-     */
-    public FormID getBaseTexture() {
-	return subRecords.getSubForm("TNAM").getForm();
-    }
+	/**
+	 *
+	 * @return
+	 */
+	public FormID getBaseTexture() {
+		return subRecords.getSubForm("TNAM").getForm();
+	}
 
-    /**
-     *
-     * @param id
-     */
-    public void setResourceList(FormID id) {
-	subRecords.setSubForm("RNAM", id);
-    }
+	/**
+	 *
+	 * @param id
+	 */
+	public void setResourceList(FormID id) {
+		subRecords.setSubForm("RNAM", id);
+	}
 
-    /**
-     *
-     * @return
-     */
-    public FormID getResourceList() {
-	return subRecords.getSubForm("RNAM").getForm();
-    }
+	/**
+	 *
+	 * @return
+	 */
+	public FormID getResourceList() {
+		return subRecords.getSubForm("RNAM").getForm();
+	}
 
-    /**
-     * @deprecated use getModelData()
-     * @return List of the AltTextures applied.
-     */
-    public ArrayList<AltTextures.AltTexture> getAltTextures() {
-	return subRecords.getModel().getAltTextures();
-    }
+	/**
+	 * @deprecated use getModelData()
+	 * @return List of the AltTextures applied.
+	 */
+	public ArrayList<AltTextures.AltTexture> getAltTextures() {
+		return subRecords.getModel().getAltTextures();
+	}
 
-    /**
-     * 
-     * @return
-     */
-    public Model getModelData() {
-	return subRecords.getModel();
-    }
+	/**
+	 * 
+	 * @return
+	 */
+	public Model getModelData() {
+		return subRecords.getModel();
+	}
 }

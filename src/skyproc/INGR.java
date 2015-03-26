@@ -20,342 +20,346 @@ import skyproc.exceptions.BadRecord;
  */
 public class INGR extends MagicItem {
 
-    // Static prototypes and definitions
-    static final SubPrototype INGRproto = new SubPrototype(MagicItem.magicItemProto) {
+	// Static prototypes and definitions
+	static final SubPrototype INGRproto = new SubPrototype(
+			MagicItem.magicItemProto) {
 
-	@Override
-	protected void addRecords() {
-	    after(new ScriptPackage(), "EDID");
-	    remove("DESC");
-	    add(new Model());
-	    add(new SubForm("YNAM"));
-	    add(new SubForm("ZNAM"));
-	    add(new DATA());
-	    add(new ENIT());
-	    reposition("EFID");
-	    add(SubString.getNew("ICON", true));
-	    add(SubString.getNew("MICO", true));
-	    add(new SubForm("ETYP"));
+		@Override
+		protected void addRecords() {
+			after(new ScriptPackage(), "EDID");
+			remove("DESC");
+			add(new Model());
+			add(new SubForm("YNAM"));
+			add(new SubForm("ZNAM"));
+			add(new DATA());
+			add(new ENIT());
+			reposition("EFID");
+			add(SubString.getNew("ICON", true));
+			add(SubString.getNew("MICO", true));
+			add(new SubForm("ETYP"));
+		}
+	};
+
+	static class DATA extends SubRecord {
+
+		int value = 0;
+		float weight = 0;
+
+		DATA() {
+			super();
+		}
+
+		@Override
+		void export(ModExporter out) throws IOException {
+			super.export(out);
+			out.write(value);
+			out.write(weight);
+		}
+
+		@Override
+		void parseData(LImport in, Mod srcMod) throws BadRecord,
+				DataFormatException, BadParameter {
+			super.parseData(in, srcMod);
+			value = in.extractInt(4);
+			weight = in.extractFloat();
+			if (SPGlobal.logging()) {
+				logMod(srcMod, "", "Setting DATA:    Weight: " + weight);
+			}
+		}
+
+		@Override
+		SubRecord getNew(String type) {
+			return new DATA();
+		}
+
+		@Override
+		int getContentLength(ModExporter out) {
+			return 8;
+		}
+
+		@Override
+		ArrayList<String> getTypes() {
+			return Record.getTypeList("DATA");
+		}
 	}
-    };
 
-    static class DATA extends SubRecord {
+	static class ENIT extends SubRecord {
 
-	int value = 0;
-	float weight = 0;
+		int baseCost = 0;
+		LFlags flags = new LFlags(4);
 
-	DATA() {
-	    super();
+		ENIT() {
+			super();
+		}
+
+		@Override
+		void export(ModExporter out) throws IOException {
+			super.export(out);
+			out.write(baseCost);
+			out.write(flags.export(), 4);
+		}
+
+		@Override
+		void parseData(LImport in, Mod srcMod) throws BadRecord,
+				DataFormatException, BadParameter {
+			super.parseData(in, srcMod);
+			baseCost = in.extractInt(4);
+			flags.set(in.extract(4));
+			if (SPGlobal.logging()) {
+				logMod(srcMod, "", "Base cost: " + baseCost + ", flags: "
+						+ flags);
+			}
+		}
+
+		@Override
+		SubRecord getNew(String type) {
+			return new ENIT();
+		}
+
+		@Override
+		int getContentLength(ModExporter out) {
+			return 8;
+		}
+
+		@Override
+		ArrayList<String> getTypes() {
+			return Record.getTypeList("ENIT");
+		}
 	}
 
-	@Override
-	void export(ModExporter out) throws IOException {
-	    super.export(out);
-	    out.write(value);
-	    out.write(weight);
+	// Enums
+	/**
+     *
+     */
+	public enum INGRFlag {
+
+		/**
+	 *
+	 */
+		ManualCalc(0),
+		/**
+	 *
+	 */
+		Food(1),
+		/**
+	 *
+	 */
+		ReferencesPersist(8);
+		int value;
+
+		INGRFlag(int value) {
+			this.value = value;
+		}
 	}
 
-	@Override
-	void parseData(LImport in, Mod srcMod) throws BadRecord, DataFormatException, BadParameter {
-	    super.parseData(in, srcMod);
-	    value = in.extractInt(4);
-	    weight = in.extractFloat();
-	    if (SPGlobal.logging()) {
-		logMod(srcMod, "", "Setting DATA:    Weight: " + weight);
-	    }
-	}
-
-	@Override
-	SubRecord getNew(String type) {
-	    return new DATA();
-	}
-
-	@Override
-	int getContentLength(ModExporter out) {
-	    return 8;
+	// Common Functions
+	INGR() {
+		super();
+		subRecords.setPrototype(INGRproto);
 	}
 
 	@Override
 	ArrayList<String> getTypes() {
-	    return Record.getTypeList("DATA");
-	}
-    }
-
-    static class ENIT extends SubRecord {
-
-	int baseCost = 0;
-	LFlags flags = new LFlags(4);
-
-	ENIT() {
-	    super();
+		return Record.getTypeList("INGR");
 	}
 
 	@Override
-	void export(ModExporter out) throws IOException {
-	    super.export(out);
-	    out.write(baseCost);
-	    out.write(flags.export(), 4);
+	INGR getNew() {
+		return new INGR();
 	}
 
-	@Override
-	void parseData(LImport in, Mod srcMod) throws BadRecord, DataFormatException, BadParameter {
-	    super.parseData(in, srcMod);
-	    baseCost = in.extractInt(4);
-	    flags.set(in.extract(4));
-	    if (SPGlobal.logging()) {
-		logMod(srcMod, "", "Base cost: " + baseCost + ", flags: " + flags);
-	    }
+	// Get/set
+	/**
+	 *
+	 * @return
+	 */
+	public ScriptPackage getScriptPackage() {
+		return subRecords.getScripts();
 	}
 
-	@Override
-	SubRecord getNew(String type) {
-	    return new ENIT();
+	/**
+	 * @deprecated use getModelData()
+	 * @param path
+	 */
+	public void setModel(String path) {
+		subRecords.getModel().setFileName(path);
 	}
 
-	@Override
-	int getContentLength(ModExporter out) {
-	    return 8;
+	/**
+	 * @deprecated use getModelData()
+	 * @return
+	 */
+	public String getModel() {
+		return subRecords.getModel().getFileName();
 	}
-
-	@Override
-	ArrayList<String> getTypes() {
-	    return Record.getTypeList("ENIT");
-	}
-    }
-
-    // Enums
-    /**
-     *
-     */
-    public enum INGRFlag {
 
 	/**
 	 *
+	 * @param pickupSound
 	 */
-	ManualCalc(0),
-	/**
-	 *
-	 */
-	Food(1),
-	/**
-	 *
-	 */
-	ReferencesPersist(8);
-	int value;
-
-	INGRFlag(int value) {
-	    this.value = value;
+	public void setPickupSound(FormID pickupSound) {
+		subRecords.setSubForm("YNAM", pickupSound);
 	}
-    }
 
-    // Common Functions
-    INGR() {
-	super();
-	subRecords.setPrototype(INGRproto);
-    }
+	/**
+	 *
+	 * @return
+	 */
+	public FormID getPickupSound() {
+		return subRecords.getSubForm("YNAM").getForm();
+	}
 
-    @Override
-    ArrayList<String> getTypes() {
-	return Record.getTypeList("INGR");
-    }
+	/**
+	 *
+	 * @param dropSound
+	 */
+	public void setDropSound(FormID dropSound) {
+		subRecords.setSubForm("ZNAM", dropSound);
+	}
 
-    @Override
-    Record getNew() {
-	return new INGR();
-    }
+	/**
+	 *
+	 * @return
+	 */
+	public FormID getDropSound() {
+		return subRecords.getSubForm("ZNAM").getForm();
+	}
 
-    // Get/set
-    /**
-     *
-     * @return
-     */
-    public ScriptPackage getScriptPackage() {
-	return subRecords.getScripts();
-    }
+	DATA getDATA() {
+		return (DATA) subRecords.get("DATA");
+	}
 
-    /**
-     * @deprecated use getModelData()
-     * @param path
-     */
-    public void setModel(String path) {
-	subRecords.getModel().setFileName(path);
-    }
+	/**
+	 *
+	 * @param weight
+	 */
+	public void setWeight(float weight) {
+		getDATA().weight = weight;
+	}
 
-    /**
-     * @deprecated use getModelData()
-     * @return
-     */
-    public String getModel() {
-	return subRecords.getModel().getFileName();
-    }
+	/**
+	 *
+	 * @return
+	 */
+	public float getWeight() {
+		return getDATA().weight;
+	}
 
-    /**
-     *
-     * @param pickupSound
-     */
-    public void setPickupSound(FormID pickupSound) {
-	subRecords.setSubForm("YNAM", pickupSound);
-    }
+	/**
+	 *
+	 * @return
+	 */
+	public int getValue() {
+		return getDATA().value;
+	}
 
-    /**
-     *
-     * @return
-     */
-    public FormID getPickupSound() {
-	return subRecords.getSubForm("YNAM").getForm();
-    }
+	/**
+	 *
+	 * @param value
+	 */
+	public void setValue(int value) {
+		getDATA().value = value;
+	}
 
-    /**
-     *
-     * @param dropSound
-     */
-    public void setDropSound(FormID dropSound) {
-	subRecords.setSubForm("ZNAM", dropSound);
-    }
+	ENIT getENIT() {
+		return (ENIT) subRecords.get("ENIT");
+	}
 
-    /**
-     *
-     * @return
-     */
-    public FormID getDropSound() {
-	return subRecords.getSubForm("ZNAM").getForm();
-    }
+	/**
+	 *
+	 * @param baseCost
+	 */
+	public void setBaseCost(int baseCost) {
+		getENIT().baseCost = baseCost;
+	}
 
-    DATA getDATA() {
-	return (DATA) subRecords.get("DATA");
-    }
+	/**
+	 *
+	 * @return
+	 */
+	public int getBaseCost() {
+		return getENIT().baseCost;
+	}
 
-    /**
-     *
-     * @param weight
-     */
-    public void setWeight(float weight) {
-	getDATA().weight = weight;
-    }
+	/**
+	 *
+	 * @param flag
+	 * @param on
+	 */
+	public void set(INGRFlag flag, boolean on) {
+		getENIT().flags.set(flag.value, on);
+	}
 
-    /**
-     *
-     * @return
-     */
-    public float getWeight() {
-	return getDATA().weight;
-    }
+	/**
+	 *
+	 * @param flag
+	 * @return
+	 */
+	public boolean get(INGRFlag flag) {
+		return getENIT().flags.get(flag.value);
+	}
 
-    /**
-     *
-     * @return
-     */
-    public int getValue() {
-	return getDATA().value;
-    }
+	/**
+	 *
+	 * @param filename
+	 */
+	public void setInventoryIcon(String filename) {
+		subRecords.setSubString("ICON", filename);
+	}
 
-    /**
-     *
-     * @param value
-     */
-    public void setValue(int value) {
-	getDATA().value = value;
-    }
+	/**
+	 *
+	 * @return
+	 */
+	public String getInventoryIcon() {
+		return subRecords.getSubString("ICON").print();
+	}
 
-    ENIT getENIT() {
-	return (ENIT) subRecords.get("ENIT");
-    }
+	/**
+	 *
+	 * @param filename
+	 */
+	public void setMessageIcon(String filename) {
+		subRecords.setSubString("MICO", filename);
+	}
 
-    /**
-     *
-     * @param baseCost
-     */
-    public void setBaseCost(int baseCost) {
-	getENIT().baseCost = baseCost;
-    }
+	/**
+	 *
+	 * @return
+	 */
+	public String getMessageIcon() {
+		return subRecords.getSubString("MICO").print();
+	}
 
-    /**
-     *
-     * @return
-     */
-    public int getBaseCost() {
-	return getENIT().baseCost;
-    }
+	/**
+	 *
+	 * @param equipType
+	 */
+	public void setEquipType(FormID equipType) {
+		subRecords.setSubForm("ETYP", equipType);
+	}
 
-    /**
-     *
-     * @param flag
-     * @param on
-     */
-    public void set(INGRFlag flag, boolean on) {
-	getENIT().flags.set(flag.value, on);
-    }
+	/**
+	 *
+	 * @return
+	 */
+	public FormID getEquipType() {
+		return subRecords.getSubForm("ETYP").getForm();
+	}
 
-    /**
-     *
-     * @param flag
-     * @return
-     */
-    public boolean get(INGRFlag flag) {
-	return getENIT().flags.get(flag.value);
-    }
+	/**
+	 * @deprecated use getModelData()
+	 * @return List of the AltTextures applied.
+	 */
+	public ArrayList<AltTextures.AltTexture> getAltTextures() {
+		return subRecords.getModel().getAltTextures();
+	}
 
-    /**
-     *
-     * @param filename
-     */
-    public void setInventoryIcon(String filename) {
-	subRecords.setSubString("ICON", filename);
-    }
-
-    /**
-     *
-     * @return
-     */
-    public String getInventoryIcon() {
-	return subRecords.getSubString("ICON").print();
-    }
-
-    /**
-     *
-     * @param filename
-     */
-    public void setMessageIcon(String filename) {
-	subRecords.setSubString("MICO", filename);
-    }
-
-    /**
-     *
-     * @return
-     */
-    public String getMessageIcon() {
-	return subRecords.getSubString("MICO").print();
-    }
-
-    /**
-     *
-     * @param equipType
-     */
-    public void setEquipType(FormID equipType) {
-	subRecords.setSubForm("ETYP", equipType);
-    }
-
-    /**
-     *
-     * @return
-     */
-    public FormID getEquipType() {
-	return subRecords.getSubForm("ETYP").getForm();
-    }
-
-    /**
-     * @deprecated use getModelData()
-     * @return List of the AltTextures applied.
-     */
-    public ArrayList<AltTextures.AltTexture> getAltTextures() {
-	return subRecords.getModel().getAltTextures();
-    }
-
-    /**
-     * 
-     * @return
-     */
-    public Model getModelData() {
-	return subRecords.getModel();
-    }
+	/**
+	 * 
+	 * @return
+	 */
+	public Model getModelData() {
+		return subRecords.getModel();
+	}
 }
