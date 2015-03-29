@@ -19,50 +19,50 @@ import skyproc.exceptions.BadRecord;
  */
 class SubListMulti<T extends SubRecord> extends SubList {
 
-    Map<String, SubRecord> prototypes = new HashMap<>(2);
+	Map<String, SubRecord<?>> prototypes = new HashMap<>(2);
 
-    SubListMulti(SubRecord ... prototypes) {
-	super(prototypes[0]);
-	for (SubRecord s : prototypes) {
-	    this.prototypes.put(s.getType(), s);
+	SubListMulti(SubRecord<?>... prototypes) {
+		super(prototypes[0]);
+		for (SubRecord<?> s : prototypes) {
+			this.prototypes.put(s.getType(), s);
+		}
 	}
-    }
 
-    SubListMulti(SubListMulti<T> rhs) {
-	super(rhs);
-	for (SubRecord s : rhs.prototypes.values()) {
-	    this.prototypes.put(s.getType(), s);
+	SubListMulti(SubListMulti<T> rhs) {
+		super(rhs);
+		for (SubRecord s : rhs.prototypes.values()) {
+			this.prototypes.put(s.getType(), s);
+		}
 	}
-    }
 
-    @Override
-    void parseData(LImport in, Mod srcMod) throws BadRecord, DataFormatException, BadParameter {
-	parseData(in, srcMod, getNextType(in));
-    }
-
-    @Override
-    void parseData(LImport in, Mod srcMod, String nextType) throws BadRecord, DataFormatException, BadParameter {
-	if (prototypes.containsKey(nextType)) {
-	    SubRecord newRecord = prototypes.get(nextType).getNew(nextType);
-	    newRecord.parseData(in, srcMod);
-	    last = newRecord;
-	    add(newRecord);
-	} else {
-	    last.parseData(in, srcMod);
+	@Override
+	void parseData(LImport in, Mod srcMod) throws BadRecord, DataFormatException, BadParameter {
+		parseData(in, srcMod, getNextType(in));
 	}
-    }
 
-    @Override
-    ArrayList<String> getTypes() {
-	HashSet<String> set = new HashSet<>();
-	for (SubRecord s : prototypes.values()) {
-	    set.addAll(s.getTypes());
+	@Override
+	void parseData(LImport in, Mod srcMod, String nextType) throws BadRecord, DataFormatException, BadParameter {
+		if (prototypes.containsKey(nextType)) {
+			SubRecord newRecord = prototypes.get(nextType).getNew(nextType);
+			newRecord.parseData(in, srcMod);
+			last = newRecord;
+			add(newRecord);
+		} else {
+			last.parseData(in, srcMod);
+		}
 	}
-	return new ArrayList<>(set);
-    }
 
-    @Override
-    SubRecord getNew(String type) {
-	return new SubListMulti(this);
-    }
+	@Override
+	ArrayList<String> getTypes() {
+		HashSet<String> set = new HashSet<>();
+		for (SubRecord s : prototypes.values()) {
+			set.addAll(s.getTypes());
+		}
+		return new ArrayList<>(set);
+	}
+
+	@Override
+	SubListMulti<T> getNew(String type) {
+		return new SubListMulti<T>(this);
+	}
 }

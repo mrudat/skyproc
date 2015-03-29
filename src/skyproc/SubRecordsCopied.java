@@ -7,6 +7,7 @@ package skyproc;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+
 import lev.LOutFile;
 import lev.Ln;
 
@@ -14,97 +15,98 @@ import lev.Ln;
  *
  * @author Justin Swanson
  */
+@SuppressWarnings("serial")
 class SubRecordsCopied extends SubRecords {
 
-    SubRecords orig;
+	SubRecords orig;
 
-    SubRecordsCopied(SubRecords rhs) {
-	super();
-	orig = rhs;
-    }
-
-    @Override
-    public Iterator<SubRecord> iterator() {
-	ArrayList<SubRecord> iter = new ArrayList<>();
-	for (String t : orig.getTopLevelTypes()) {
-	    if (contains(t)) {
-		iter.add(get(t));
-	    }
+	SubRecordsCopied(SubRecords rhs) {
+		super();
+		orig = rhs;
 	}
-	return iter.iterator();
-    }
 
-    @Override
-    protected void export(ModExporter out) throws IOException {
-	for (SubRecord s : iteratorNoCopy()) {
-	    s.export(out);
-	}
-    }
-
-    @Override
-    public int length(ModExporter out) {
-	int length = 0;
-	for (SubRecord s : iteratorNoCopy()) {
-	    length += s.getTotalLength(out);
-	}
-	return length;
-    }
-
-    public ArrayList<SubRecord> iteratorNoCopy() {
-	ArrayList<SubRecord> out = new ArrayList<>();
-	for (String t : orig.getTopLevelTypes()) {
-	    if (contains(t)) {
-		SubRecord s;
-		if (map.containsKey(t)) {
-		    s = map.get(t);
-		} else {
-		    s = orig.get(t);
+	@Override
+	public Iterator<SubRecord<?>> iterator() {
+		ArrayList<SubRecord<?>> iter = new ArrayList<>();
+		for (String t : orig.getTopLevelTypes()) {
+			if (contains(t)) {
+				iter.add(get(t));
+			}
 		}
-		if (shouldExport(s)) {
-		    out.add(s);
+		return iter.iterator();
+	}
+
+	@Override
+	protected void export(ModExporter out) throws IOException {
+		for (SubRecord<?> s : iteratorNoCopy()) {
+			s.export(out);
 		}
-	    }
 	}
-	return out;
-    }
 
-    @Override
-    public boolean contains(String t) {
-	return orig.contains(t) || map.containsKey(t);
-    }
-
-    @Override
-    public SubRecord get(String in) {
-	if (!map.containsKey(in)) {
-	    SubRecord s = (SubRecord) Ln.deepCopy(orig.get(in));
-	    for (String t : s.getTypes()) {
-		map.put(t, s);
-	    }
+	@Override
+	public int length(ModExporter out) {
+		int length = 0;
+		for (SubRecord<?> s : iteratorNoCopy()) {
+			length += s.getTotalLength(out);
+		}
+		return length;
 	}
-	return map.get(in);
-    }
 
-    @Override
-    public ArrayList<String> getTypes() {
-	return orig.getTypes();
-    }
-
-    @Override
-    public ArrayList<String> getTopLevelTypes() {
-	return orig.getTopLevelTypes();
-    }
-
-    @Override
-    public ArrayList<FormID> allFormIDs() {
-	ArrayList<FormID> out = new ArrayList<>();
-	for (SubRecord s : iteratorNoCopy()) {
-	    out.addAll(s.allFormIDs());
+	public ArrayList<SubRecord> iteratorNoCopy() {
+		ArrayList<SubRecord> out = new ArrayList<>();
+		for (String t : orig.getTopLevelTypes()) {
+			if (contains(t)) {
+				SubRecord s;
+				if (map.containsKey(t)) {
+					s = map.get(t);
+				} else {
+					s = orig.get(t);
+				}
+				if (shouldExport(s)) {
+					out.add(s);
+				}
+			}
+		}
+		return out;
 	}
-	return out;
-    }
 
-    @Override
-    public SubPrototype getPrototype() {
-	return orig.getPrototype();
-    }
+	@Override
+	public boolean contains(String t) {
+		return orig.contains(t) || map.containsKey(t);
+	}
+
+	@Override
+	public SubRecord get(String in) {
+		if (!map.containsKey(in)) {
+			SubRecord s = (SubRecord) Ln.deepCopy(orig.get(in));
+			for (String t : s.getTypes()) {
+				map.put(t, s);
+			}
+		}
+		return map.get(in);
+	}
+
+	@Override
+	public ArrayList<String> getTypes() {
+		return orig.getTypes();
+	}
+
+	@Override
+	public ArrayList<String> getTopLevelTypes() {
+		return orig.getTopLevelTypes();
+	}
+
+	@Override
+	public ArrayList<FormID> allFormIDs() {
+		ArrayList<FormID> out = new ArrayList<>();
+		for (SubRecord s : iteratorNoCopy()) {
+			out.addAll(s.allFormIDs());
+		}
+		return out;
+	}
+
+	@Override
+	public SubPrototype getPrototype() {
+		return orig.getPrototype();
+	}
 }

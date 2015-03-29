@@ -55,14 +55,14 @@ public class STAT extends MajorRecord {
 		}
 
 		@Override
-		ArrayList allFormIDs() {
+		ArrayList<FormID> allFormIDs() {
 			ArrayList<FormID> out = new ArrayList<>(1);
 			out.add(id);
 			return out;
 		}
 
 		@Override
-		SubRecord getNew(String type) {
+		DNAM getNew(String type) {
 			return new DNAM();
 		}
 

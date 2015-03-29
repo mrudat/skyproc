@@ -8,24 +8,25 @@ import java.util.ArrayList;
 
 /**
  *
- * @param <T> 
+ * @param <T>
  * @author Justin Swanson
  */
+@SuppressWarnings("serial")
 abstract class SubRecordTyped<T> extends SubRecord<T> {
 
-    ArrayList<String> types;
+	ArrayList<String> types;
 
-    SubRecordTyped(String t) {
-	types = Record.getTypeList(t);
-    }
+	SubRecordTyped(String t) {
+		types = Record.getTypeList(t);
+	}
 
-    SubRecordTyped(ArrayList<String> t) {
-	types = t;
-    }
+	SubRecordTyped(ArrayList<String> t) {
+		types = t;
+	}
 
-    @Override
-    ArrayList<String> getTypes() {
-	return types;
-    }
+	@Override
+	ArrayList<String> getTypes() {
+		return types;
+	}
 
 }

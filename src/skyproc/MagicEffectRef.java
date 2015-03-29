@@ -21,205 +21,206 @@ import skyproc.exceptions.BadRecord;
  */
 public class MagicEffectRef extends SubShellBulkType {
 
-    static SubPrototype magicEffProto = new SubPrototype() {
-	@Override
-	protected void addRecords() {
-	    add(new SubForm("EFID"));
-	    add(new EFIT());
-	    add(new SubList<>(new Condition()));
+	static SubPrototype magicEffProto = new SubPrototype() {
+		@Override
+		protected void addRecords() {
+			add(new SubForm("EFID"));
+			add(new EFIT());
+			add(new SubList<>(new Condition()));
+		}
+	};
+
+	/**
+	 * @param magicEffectRef
+	 *            A formID to a MGEF record.
+	 */
+	public MagicEffectRef(FormID magicEffectRef) {
+		this();
+		subRecords.setSubForm("EFID", magicEffectRef);
 	}
-    };
 
-    /**
-     * @param magicEffectRef A formID to a MGEF record.
-     */
-    public MagicEffectRef(FormID magicEffectRef) {
-	this();
-	subRecords.setSubForm("EFID", magicEffectRef);
-    }
-
-    MagicEffectRef() {
-	super(magicEffProto, false);
-    }
-
-    @Override
-    SubRecord getNew(String type) {
-	return new MagicEffectRef();
-    }
-
-    @Override
-    boolean isValid() {
-	return subRecords.isAnyValid();
-    }
-
-    /**
-     *
-     * @param obj
-     * @return
-     */
-    @Override
-    public boolean equals(Object obj) {
-	if (obj == null) {
-	    return false;
-	}
-	if (getClass() != obj.getClass()) {
-	    return false;
-	}
-	final MagicEffectRef other = (MagicEffectRef) obj;
-	if (!this.getMagicRef().equals(other.getMagicRef())) {
-	    return false;
-	}
-	return true;
-    }
-
-    /**
-     *
-     * @return
-     */
-    @Override
-    public int hashCode() {
-	int hash = 7;
-	hash = 71 * hash + getMagicRef().hashCode();
-	return hash;
-    }
-
-    static class EFIT extends SubRecord {
-
-	float magnitude = 0;
-	int AOE = 0;
-	int duration = 0;
-
-	EFIT() {
-	    super();
+	MagicEffectRef() {
+		super(magicEffProto, false);
 	}
 
 	@Override
-	void export(ModExporter out) throws IOException {
-	    super.export(out);
-	    out.write(magnitude);
-	    out.write(AOE);
-	    out.write(duration);
-	}
-
-	@Override
-	void parseData(LImport in, Mod srcMod) throws BadRecord, DataFormatException, BadParameter {
-	    super.parseData(in, srcMod);
-	    magnitude = in.extractFloat();
-	    AOE = in.extractInt(4);
-	    duration = in.extractInt(4);
-	}
-
-	@Override
-	SubRecord getNew(String type) {
-	    return new EFIT();
+	MagicEffectRef getNew(String type) {
+		return new MagicEffectRef();
 	}
 
 	@Override
 	boolean isValid() {
-	    return true;
+		return subRecords.isAnyValid();
 	}
 
+	/**
+	 *
+	 * @param obj
+	 * @return
+	 */
 	@Override
-	int getContentLength(ModExporter out) {
-	    return 12;
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final MagicEffectRef other = (MagicEffectRef) obj;
+		if (!this.getMagicRef().equals(other.getMagicRef())) {
+			return false;
+		}
+		return true;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	@Override
-	ArrayList<String> getTypes() {
-	    return Record.getTypeList("EFIT");
+	public int hashCode() {
+		int hash = 7;
+		hash = 71 * hash + getMagicRef().hashCode();
+		return hash;
 	}
-    }
 
-    // Get/Set
-    /**
-     *
-     * @param magicRef
-     */
-    public void setMagicRef(FormID magicRef) {
-	subRecords.setSubForm("EFID", magicRef);
-    }
+	static class EFIT extends SubRecord {
 
-    /**
-     *
-     * @return
-     */
-    public FormID getMagicRef() {
-	return subRecords.getSubForm("EFID").getForm();
-    }
+		float magnitude = 0;
+		int AOE = 0;
+		int duration = 0;
 
-    EFIT getEFIT() {
-	return (EFIT)subRecords.get("EFIT");
-    }
+		EFIT() {
+			super();
+		}
 
-    /**
-     *
-     * @param magnitude
-     */
-    public void setMagnitude(float magnitude) {
-	getEFIT().magnitude = magnitude;
-    }
+		@Override
+		void export(ModExporter out) throws IOException {
+			super.export(out);
+			out.write(magnitude);
+			out.write(AOE);
+			out.write(duration);
+		}
 
-    /**
-     *
-     * @return
-     */
-    public float getMagnitude() {
-	return getEFIT().magnitude;
-    }
+		@Override
+		void parseData(LImport in, Mod srcMod) throws BadRecord, DataFormatException, BadParameter {
+			super.parseData(in, srcMod);
+			magnitude = in.extractFloat();
+			AOE = in.extractInt(4);
+			duration = in.extractInt(4);
+		}
 
-    /**
-     *
-     * @param aoe
-     */
-    public void setAreaOfEffect(int aoe) {
-	getEFIT().AOE = aoe;
-    }
+		@Override
+		SubRecord getNew(String type) {
+			return new EFIT();
+		}
 
-    /**
-     *
-     * @return
-     */
-    public int getAreaOfEffect() {
-	return getEFIT().AOE;
-    }
+		@Override
+		boolean isValid() {
+			return true;
+		}
 
-    /**
-     *
-     * @param duration
-     */
-    public void setDuration(int duration) {
-	getEFIT().duration = duration;
-    }
+		@Override
+		int getContentLength(ModExporter out) {
+			return 12;
+		}
 
-    /**
-     *
-     * @return
-     */
-    public int getDuration() {
-	return getEFIT().duration;
-    }
+		@Override
+		ArrayList<String> getTypes() {
+			return Record.getTypeList("EFIT");
+		}
+	}
 
-    /**
-     *
-     * @return
-     */
-    public ArrayList<Condition> getConditions() {
-	return subRecords.getSubList("CTDA").toPublic();
-    }
+	// Get/Set
+	/**
+	 *
+	 * @param magicRef
+	 */
+	public void setMagicRef(FormID magicRef) {
+		subRecords.setSubForm("EFID", magicRef);
+	}
 
-    /**
-     * 
-     * @param c
-     */
-    public void addCondition(Condition c) {
-	subRecords.getSubList("CTDA").add(c);
-    }
+	/**
+	 *
+	 * @return
+	 */
+	public FormID getMagicRef() {
+		return subRecords.getSubForm("EFID").getForm();
+	}
 
-    /**
-     * 
-     * @param c
-     */
-    public void removeCondition(Condition c) {
-	subRecords.getSubList("CTDA").remove(c);
-    }
+	EFIT getEFIT() {
+		return (EFIT) subRecords.get("EFIT");
+	}
+
+	/**
+	 *
+	 * @param magnitude
+	 */
+	public void setMagnitude(float magnitude) {
+		getEFIT().magnitude = magnitude;
+	}
+
+	/**
+	 *
+	 * @return
+	 */
+	public float getMagnitude() {
+		return getEFIT().magnitude;
+	}
+
+	/**
+	 *
+	 * @param aoe
+	 */
+	public void setAreaOfEffect(int aoe) {
+		getEFIT().AOE = aoe;
+	}
+
+	/**
+	 *
+	 * @return
+	 */
+	public int getAreaOfEffect() {
+		return getEFIT().AOE;
+	}
+
+	/**
+	 *
+	 * @param duration
+	 */
+	public void setDuration(int duration) {
+		getEFIT().duration = duration;
+	}
+
+	/**
+	 *
+	 * @return
+	 */
+	public int getDuration() {
+		return getEFIT().duration;
+	}
+
+	/**
+	 *
+	 * @return
+	 */
+	public ArrayList<Condition> getConditions() {
+		return subRecords.getSubList("CTDA").toPublic();
+	}
+
+	/**
+	 * 
+	 * @param c
+	 */
+	public void addCondition(Condition c) {
+		subRecords.getSubList("CTDA").add(c);
+	}
+
+	/**
+	 * 
+	 * @param c
+	 */
+	public void removeCondition(Condition c) {
+		subRecords.getSubList("CTDA").remove(c);
+	}
 }

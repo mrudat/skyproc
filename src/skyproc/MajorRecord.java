@@ -18,7 +18,8 @@ import skyproc.exceptions.BadRecord;
  *
  * @author Justin Swanson
  */
-public abstract class MajorRecord extends Record implements Serializable {
+@SuppressWarnings("serial")
+public abstract class MajorRecord<M extends MajorRecord<M>> extends Record implements Serializable {
 
 	static final SubPrototype majorProto = new SubPrototype() {
 
@@ -115,25 +116,20 @@ public abstract class MajorRecord extends Record implements Serializable {
 		return out + "]";
 	}
 
-	<T extends MajorRecord> T copyOf(Mod modToOriginateFrom) {
+	M copyOf(Mod modToOriginateFrom) {
 		return copyOf(modToOriginateFrom, this.getEDID() + "_DUP");
 	}
 
-	//abstract MajorRecord getNew();
-	MajorRecord getNew() {
-		return getNewMajorRecord();
-	}
+	abstract M getNew();
 
-	<M extends MajorRecord> M getNewMajorRecord() {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
+	// M getNew() { return getNewMajorRecord(); }
 
-	<T extends MajorRecord> T copyOf(Mod modToOriginateFrom, String edid) {
-		T out = this.getNewMajorRecord();
+	M copyOf(Mod modToOriginateFrom, String edid) {
+		M out = this.getNew();
 		out.formVersion = this.formVersion;
 		out.version = Arrays.copyOf(this.version, this.version.length);
 		out.srcMod = modToOriginateFrom;
-		((MajorRecord) out).ID = new FormID();
+		((MajorRecord<M>) out).ID = new FormID();
 		out.majorFlags = new LFlags(majorFlags);
 		System.arraycopy(revision, 0, out.revision, 0, revision.length);
 		System.arraycopy(version, 0, out.version, 0, version.length);
@@ -149,8 +145,8 @@ public abstract class MajorRecord extends Record implements Serializable {
 	 *            A unique EDID
 	 * @return
 	 */
-	public MajorRecord copy(String edid) {
-		return SPGlobal.getGlobalPatch().makeCopy(this, edid);
+	public M copy(String edid) {
+		return SPGlobal.getGlobalPatch().makeCopy((M) this, edid);
 	}
 
 	@Override
@@ -163,8 +159,7 @@ public abstract class MajorRecord extends Record implements Serializable {
 	}
 
 	@Override
-	void parseData(LImport in, Mod srcMod) throws BadRecord,
-			DataFormatException, BadParameter {
+	void parseData(LImport in, Mod srcMod) throws BadRecord, DataFormatException, BadParameter {
 		super.parseData(in, srcMod);
 
 		majorFlags = new LFlags(in.extract(4));
@@ -187,8 +182,7 @@ public abstract class MajorRecord extends Record implements Serializable {
 		importSubRecords(in);
 	}
 
-	void importSubRecords(LImport in) throws BadRecord, DataFormatException,
-			BadParameter {
+	void importSubRecords(LImport in) throws BadRecord, DataFormatException, BadParameter {
 		subRecords.importSubRecords(in, srcMod);
 	}
 
@@ -206,8 +200,7 @@ public abstract class MajorRecord extends Record implements Serializable {
 	 */
 	@Override
 	public String print() {
-		logMod(srcMod, getTypes().toString(), "Form ID: " + getFormStr()
-				+ ", EDID: " + getEDID());
+		logMod(srcMod, getTypes().toString(), "Form ID: " + getFormStr() + ", EDID: " + getEDID());
 		return "";
 	}
 

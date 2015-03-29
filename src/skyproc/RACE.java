@@ -7,10 +7,12 @@ package skyproc;
 import skyproc.genenums.Gender;
 import skyproc.genenums.FirstPersonFlags;
 import skyproc.genenums.ActorValue;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.zip.DataFormatException;
+
 import lev.LImport;
 import lev.LOutFile;
 import lev.LFlags;
@@ -318,7 +320,8 @@ public class RACE extends MajorRecordDescription {
 	/**
      *
      */
-	static final public class AttackDataInternal extends SubRecord {
+	@SuppressWarnings("serial")
+	static final public class AttackDataInternal extends SubRecord<AttackDataInternal> {
 
 		float damageMult = 0;
 		float attackChance = 0;
@@ -406,6 +409,7 @@ public class RACE extends MajorRecordDescription {
 	/**
      *
      */
+	@SuppressWarnings("serial")
 	static final public class AttackData extends SubShell {
 
 		AttackData() {
@@ -442,7 +446,7 @@ public class RACE extends MajorRecordDescription {
 		}
 
 		@Override
-		SubRecord getNew(String type) {
+		AttackData getNew(String type) {
 			return new AttackData();
 		}
 
@@ -645,8 +649,8 @@ public class RACE extends MajorRecordDescription {
 	public static enum RACEFlags {
 
 		/**
-	 *
-	 */
+		 * It is possible for the player to be this race.
+		 */
 		Playable,
 		/**
 	 *

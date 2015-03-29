@@ -18,33 +18,33 @@ import skyproc.exceptions.BadRecord;
  */
 public class SubStringNonNull extends SubString {
 
-    SubStringNonNull(String t) {
-	super(t);
-    }
-
-    @Override
-    void parseData(LImport in, Mod srcMod) throws BadRecord, DataFormatException, BadParameter {
-	in.skip(getIdentifierLength() + getSizeLength());
-	string = Ln.arrayToString(in.extractInts(in.available()));
-	if (logging()) {
-	    logMod(srcMod, getType().toString(), "Setting " + toString() + " to " + print());
+	SubStringNonNull(String t) {
+		super(t);
 	}
-    }
 
-    @Override
-    int getContentLength(ModExporter out) {
-	return string.length();
-    }
+	@Override
+	void parseData(LImport in, Mod srcMod) throws BadRecord, DataFormatException, BadParameter {
+		in.skip(getIdentifierLength() + getSizeLength());
+		string = Ln.arrayToString(in.extractInts(in.available()));
+		if (logging()) {
+			logMod(srcMod, getType().toString(), "Setting " + toString() + " to " + print());
+		}
+	}
 
-    @Override
-    void export(ModExporter out) throws IOException {
-	out.write(getType().toString());
-	out.write(getContentLength(out), 2);
-	out.write(string);
-    }
+	@Override
+	int getContentLength(ModExporter out) {
+		return string.length();
+	}
 
-    @Override
-    SubRecord getNew(String type_) {
-	return new SubStringNonNull(type_);
-    }
+	@Override
+	void export(ModExporter out) throws IOException {
+		out.write(getType().toString());
+		out.write(getContentLength(out), 2);
+		out.write(string);
+	}
+
+	@Override
+	SubStringNonNull getNew(String type_) {
+		return new SubStringNonNull(type_);
+	}
 }

@@ -2,10 +2,12 @@ package skyproc;
 
 import skyproc.genenums.Skill;
 import skyproc.genenums.SoundVolume;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.zip.DataFormatException;
+
 import lev.*;
 import skyproc.exceptions.BadParameter;
 import skyproc.exceptions.BadRecord;
@@ -101,7 +103,7 @@ public class NPC_ extends MajorRecordNamed implements Serializable {
 		}
 
 		@Override
-		SubRecord getNew(String type_) {
+		SoundPackage getNew(String type_) {
 			return new SoundPackage();
 		}
 
@@ -213,7 +215,7 @@ public class NPC_ extends MajorRecordNamed implements Serializable {
 		}
 
 		@Override
-		SubRecord getNew(String type) {
+		SoundPair getNew(String type) {
 			return new SoundPair();
 		}
 	}
@@ -239,7 +241,7 @@ public class NPC_ extends MajorRecordNamed implements Serializable {
 		}
 
 		@Override
-		SubRecord getNew(String type_) {
+		TintLayer getNew(String type_) {
 			return new TintLayer();
 		}
 
@@ -410,7 +412,8 @@ public class NPC_ extends MajorRecordNamed implements Serializable {
 		}
 	}
 
-	static class ACBS extends SubRecord implements Serializable {
+	@SuppressWarnings("serial")
+	static class ACBS extends SubRecord<ACBS> implements Serializable {
 
 		LFlags ACBSflags = new LFlags(4);
 		int magickaOffset = 0;
@@ -429,7 +432,7 @@ public class NPC_ extends MajorRecordNamed implements Serializable {
 		}
 
 		@Override
-		SubRecord getNew(String type) {
+		ACBS getNew(String type) {
 			return new ACBS();
 		}
 
@@ -492,7 +495,8 @@ public class NPC_ extends MajorRecordNamed implements Serializable {
 		}
 	}
 
-	static class AIDT extends SubRecord implements Serializable {
+	@SuppressWarnings("serial")
+	static class AIDT extends SubRecord<AIDT> implements Serializable {
 
 		Aggression aggression = Aggression.Unaggressive;
 		Confidence confidence = Confidence.Cowardly;
@@ -511,7 +515,7 @@ public class NPC_ extends MajorRecordNamed implements Serializable {
 		}
 
 		@Override
-		SubRecord getNew(String type) {
+		AIDT getNew(String type) {
 			return new AIDT();
 		}
 
@@ -576,7 +580,8 @@ public class NPC_ extends MajorRecordNamed implements Serializable {
 		}
 	}
 
-	static class ATKD extends SubRecord implements Serializable {
+	@SuppressWarnings("serial")
+	static class ATKD extends SubRecord<ATKD> implements Serializable {
 
 		float damageMult;
 		float attackChance;
@@ -637,7 +642,7 @@ public class NPC_ extends MajorRecordNamed implements Serializable {
 		}
 
 		@Override
-		SubRecord getNew(String type) {
+		ATKD getNew(String type) {
 			return new ATKD();
 		}
 
@@ -660,7 +665,8 @@ public class NPC_ extends MajorRecordNamed implements Serializable {
 		}
 	}
 
-	static class NAM9 extends SubRecord implements Serializable {
+	@SuppressWarnings("serial")
+	static class NAM9 extends SubRecord<NAM9> implements Serializable {
 
 		float noseLong = 0;
 		float noseUp = 0;
@@ -743,7 +749,7 @@ public class NPC_ extends MajorRecordNamed implements Serializable {
 		}
 
 		@Override
-		SubRecord getNew(String type) {
+		NAM9 getNew(String type) {
 			return new NAM9();
 		}
 
@@ -758,7 +764,8 @@ public class NPC_ extends MajorRecordNamed implements Serializable {
 		}
 	}
 
-	static class NAMA extends SubRecord implements Serializable {
+	@SuppressWarnings("serial")
+	static class NAMA extends SubRecord<NAMA> implements Serializable {
 
 		int nose;
 		int unknown;
@@ -791,7 +798,7 @@ public class NPC_ extends MajorRecordNamed implements Serializable {
 		}
 
 		@Override
-		SubRecord getNew(String type) {
+		NAMA getNew(String type) {
 			return new NAMA();
 		}
 

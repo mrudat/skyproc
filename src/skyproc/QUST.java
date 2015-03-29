@@ -491,7 +491,7 @@ public class QUST extends MajorRecordNamed {
 		}
 
 		@Override
-		SubRecord getNew(String type) {
+		QuestLogEntry getNew(String type) {
 			return new QuestLogEntry();
 		}
 
@@ -593,7 +593,7 @@ public class QUST extends MajorRecordNamed {
 		}
 
 		@Override
-		SubRecord getNew(String type) {
+		QuestObjective getNew(String type) {
 			return new QuestObjective();
 		}
 
@@ -714,7 +714,7 @@ public class QUST extends MajorRecordNamed {
 		}
 
 		@Override
-		SubRecord getNew(String type) {
+		QuestTarget getNew(String type) {
 			return new QuestTarget();
 		}
 

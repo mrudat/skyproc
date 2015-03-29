@@ -4,27 +4,27 @@
  */
 package skyproc;
 
-import skyproc.genenums.Gender;
-import skyproc.genenums.Perspective;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.zip.DataFormatException;
+
 import lev.LImport;
-import lev.LOutFile;
 import skyproc.AltTextures.AltTexture;
 import skyproc.exceptions.BadParameter;
 import skyproc.exceptions.BadRecord;
+import skyproc.genenums.Gender;
+import skyproc.genenums.Perspective;
 
 /**
  * Armature records (pieces of armor)
  *
  * @author Justin Swanson
  */
-public class ARMA extends MajorRecord {
+@SuppressWarnings("serial")
+public class ARMA extends MajorRecord<ARMA> {
 
 	// Static prototypes and definitions
-	static final SubPrototype ARMAprototype = new SubPrototype(
-			MajorRecord.majorProto) {
+	static final SubPrototype ARMAprototype = new SubPrototype(MajorRecord.majorProto) {
 
 		@Override
 		protected void addRecords() {
@@ -59,7 +59,7 @@ public class ARMA extends MajorRecord {
 		}
 	};
 
-	static final class DNAM extends SubRecord {
+	static final class DNAM extends SubRecord<DNAM> {
 
 		int malePriority;
 		int femalePriority;
@@ -84,8 +84,7 @@ public class ARMA extends MajorRecord {
 		}
 
 		@Override
-		void parseData(LImport in, Mod srcMod) throws BadRecord,
-				DataFormatException, BadParameter {
+		void parseData(LImport in, Mod srcMod) throws BadRecord, DataFormatException, BadParameter {
 			super.parseData(in, srcMod);
 			malePriority = in.extractInt(1);
 			femalePriority = in.extractInt(1);
@@ -94,15 +93,12 @@ public class ARMA extends MajorRecord {
 			unknown2 = in.extract(1);
 			weaponAdjust = in.extractFloat();
 			if (logging()) {
-				logMod(srcMod, "", "M-Priority: " + malePriority
-						+ ", F-Priority: " + femalePriority
-						+ ", DetectionValue: " + detectionSoundValue
-						+ ", weaponAdjust: " + weaponAdjust);
+				logMod(srcMod, "", "M-Priority: " + malePriority + ", F-Priority: " + femalePriority + ", DetectionValue: " + detectionSoundValue + ", weaponAdjust: " + weaponAdjust);
 			}
 		}
 
 		@Override
-		SubRecord getNew(String type) {
+		DNAM getNew(String type) {
 			return new DNAM();
 		}
 
@@ -186,8 +182,7 @@ public class ARMA extends MajorRecord {
 	 *         if a model path does not exist for specified parameters.
 	 */
 	public String getModelPath(Gender gender, Perspective perspective) {
-		return subRecords.getSubString(getModelPathType(gender, perspective))
-				.print();
+		return subRecords.getSubString(getModelPathType(gender, perspective)).print();
 	}
 
 	String getAltTexType(Gender gender, Perspective perspective) {
@@ -219,10 +214,8 @@ public class ARMA extends MajorRecord {
 	 *            Perspective of the AltTexture set to query.
 	 * @return List of the AltTextures applied to the gender/perspective.
 	 */
-	public ArrayList<AltTexture> getAltTextures(Gender gender,
-			Perspective perspective) {
-		AltTextures t = (AltTextures) subRecords.get(getAltTexType(gender,
-				perspective));
+	public ArrayList<AltTexture> getAltTextures(Gender gender, Perspective perspective) {
+		AltTextures t = (AltTextures) subRecords.get(getAltTexType(gender, perspective));
 		return t.altTextures;
 	}
 
@@ -240,10 +233,8 @@ public class ARMA extends MajorRecord {
 	 *         Each set contains matching Alt Textures with the same name and
 	 *         TXST formID reference, in the same corresponding indices.
 	 */
-	public boolean equalAltTextures(ARMA rhs, Gender gender,
-			Perspective perspective) {
-		return AltTextures.equal(getAltTextures(gender, perspective),
-				rhs.getAltTextures(gender, perspective));
+	public boolean equalAltTextures(ARMA rhs, Gender gender, Perspective perspective) {
+		return AltTextures.equal(getAltTextures(gender, perspective), rhs.getAltTextures(gender, perspective));
 	}
 
 	/**

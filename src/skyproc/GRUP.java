@@ -319,7 +319,7 @@ public class GRUP<T extends MajorRecord> extends SubRecord implements
 	}
 
 	@Override
-	Record getNew() {
+	GRUP<T> getNew() {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 

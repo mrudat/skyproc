@@ -4,20 +4,21 @@
  */
 package skyproc;
 
-import skyproc.genenums.Gender;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.zip.DataFormatException;
+
 import lev.LImport;
-import lev.LOutFile;
 import skyproc.exceptions.BadParameter;
 import skyproc.exceptions.BadRecord;
+import skyproc.genenums.Gender;
 
 /**
  * Armor Records
  *
  * @author Justin Swanson
  */
+@SuppressWarnings("serial")
 public class ARMO extends MajorRecordDescription {
 
 	// Static prototypes and definitions
@@ -73,7 +74,7 @@ public class ARMO extends MajorRecordDescription {
 		return new ARMO();
 	}
 
-	static class DATA extends SubRecord {
+	static class DATA extends SubRecord<DATA> {
 
 		int value;
 		float weight;
@@ -101,7 +102,7 @@ public class ARMO extends MajorRecordDescription {
 		}
 
 		@Override
-		SubRecord getNew(String type) {
+		DATA getNew(String type) {
 			return new DATA();
 		}
 

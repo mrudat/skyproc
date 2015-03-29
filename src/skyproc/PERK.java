@@ -86,7 +86,7 @@ public class PERK extends MajorRecordDescription {
 		}
 
 		@Override
-		SubRecord getNew(String type) {
+		PRKEPackage getNew(String type) {
 			return new PRKEPackage(getPrototype());
 		}
 
@@ -104,7 +104,7 @@ public class PERK extends MajorRecordDescription {
 		}
 
 		@Override
-		SubRecord getNew(String type) {
+		PRKEComplexSubPackage getNew(String type) {
 			return new PRKEComplexSubPackage(getPrototype());
 		}
 

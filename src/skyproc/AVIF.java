@@ -54,12 +54,12 @@ public class AVIF extends MajorRecordDescription {
 		}
 
 		@Override
-		SubRecord getNew(String type) {
+		PerkReference getNew(String type) {
 			return new PerkReference(getPrototype());
 		}
 
 		@Override
-		Record getNew() {
+		PerkReference getNew() {
 			return new PerkReference(getPrototype());
 		}
 

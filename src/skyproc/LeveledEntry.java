@@ -17,140 +17,142 @@ import skyproc.exceptions.BadRecord;
  * @author Justin Swanson
  */
 public class LeveledEntry extends SubShell {
-    
-    static final SubPrototype LVLOproto = new SubPrototype() {
-	@Override
-	protected void addRecords() {
-	    add(new LVLOin());
-	    add(new Owner());
+
+	static final SubPrototype LVLOproto = new SubPrototype() {
+		@Override
+		protected void addRecords() {
+			add(new LVLOin());
+			add(new Owner());
+		}
+	};
+
+	/**
+	 *
+	 * @param id
+	 * @param level
+	 * @param count
+	 */
+	public LeveledEntry(FormID id, int level, int count) {
+		this();
+		setForm(id);
+		setLevel(level);
+		setCount(count);
 	}
-    };
 
-    /**
-     *
-     * @param id
-     * @param level
-     * @param count
-     */
-    public LeveledEntry(FormID id, int level, int count) {
-	this();
-	setForm(id);
-	setLevel(level);
-	setCount(count);
-    }
-
-    LeveledEntry() {
-	super(LVLOproto);
-    }
-
-    @Override
-    boolean isValid() {
-	return subRecords.isAnyValid();
-    }
-
-    @Override
-    SubRecord getNew(String type) {
-	return new LeveledEntry();
-    }
-
-    static class LVLOin extends SubRecord {
-
-	int level = 1;
-	FormID entry = new FormID();
-	int count = 1;
-
-	LVLOin() {
-	    super();
+	LeveledEntry() {
+		super(LVLOproto);
 	}
 
 	@Override
-	SubRecord getNew(String type) {
-	    return new LVLOin();
+	boolean isValid() {
+		return subRecords.isAnyValid();
 	}
 
 	@Override
-	int getContentLength(ModExporter out) {
-	    return 12;
+	LeveledEntry getNew(String type) {
+		return new LeveledEntry();
 	}
 
-	@Override
-	ArrayList<FormID> allFormIDs() {
-	    ArrayList<FormID> out = new ArrayList<>(1);
-	    out.add(entry);
-	    return out;
+	static class LVLOin extends SubRecord {
+
+		int level = 1;
+		FormID entry = new FormID();
+		int count = 1;
+
+		LVLOin() {
+			super();
+		}
+
+		@Override
+		SubRecord getNew(String type) {
+			return new LVLOin();
+		}
+
+		@Override
+		int getContentLength(ModExporter out) {
+			return 12;
+		}
+
+		@Override
+		ArrayList<FormID> allFormIDs() {
+			ArrayList<FormID> out = new ArrayList<>(1);
+			out.add(entry);
+			return out;
+		}
+
+		@Override
+		void export(ModExporter out) throws IOException {
+			super.export(out);
+			out.write(level, 4);
+			entry.export(out);
+			out.write(count, 4);
+		}
+
+		@Override
+		void parseData(LImport in, Mod srcMod) throws BadRecord, DataFormatException, BadParameter {
+			super.parseData(in, srcMod);
+			level = in.extractInt(4);
+			entry.parseData(in, srcMod);
+			count = in.extractInt(4);
+		}
+
+		@Override
+		ArrayList<String> getTypes() {
+			return Record.getTypeList("LVLO");
+		}
 	}
 
-	@Override
-	void export(ModExporter out) throws IOException {
-	    super.export(out);
-	    out.write(level, 4);
-	    entry.export(out);
-	    out.write(count, 4);
+	LVLOin getEntry() {
+		return (LVLOin) subRecords.get("LVLO");
 	}
 
-	@Override
-	void parseData(LImport in, Mod srcMod) throws BadRecord, DataFormatException, BadParameter {
-	    super.parseData(in, srcMod);
-	    level = in.extractInt(4);
-	    entry.parseData(in, srcMod);
-	    count = in.extractInt(4);
+	/**
+	 *
+	 * @return The level this entry is marked on the LVLN.
+	 */
+	public int getLevel() {
+		return getEntry().level;
 	}
 
-	@Override
-	ArrayList<String> getTypes() {
-	    return Record.getTypeList("LVLO");
+	/**
+	 *
+	 * @param in
+	 *            The level to mark the entry as on the LVLN.
+	 */
+	final public void setLevel(int in) {
+		getEntry().level = in;
 	}
-    }
 
-    LVLOin getEntry() {
-	return (LVLOin) subRecords.get("LVLO");
-    }
+	/**
+	 *
+	 * @param in
+	 *            The number to set the spawn count to.
+	 */
+	final public void setCount(int in) {
+		getEntry().count = in;
+	}
 
-    /**
-     *
-     * @return The level this entry is marked on the LVLN.
-     */
-    public int getLevel() {
-	return getEntry().level;
-    }
+	/**
+	 *
+	 * @return The spawn counter.
+	 */
+	public int getCount() {
+		return getEntry().count;
+	}
 
-    /**
-     *
-     * @param in The level to mark the entry as on the LVLN.
-     */
-    final public void setLevel(int in) {
-	getEntry().level = in;
-    }
+	/**
+	 *
+	 * @param id
+	 */
+	final public void setForm(FormID id) {
+		getEntry().entry = id;
+	}
 
-    /**
-     *
-     * @param in The number to set the spawn count to.
-     */
-    final public void setCount(int in) {
-	getEntry().count = in;
-    }
-
-    /**
-     *
-     * @return The spawn counter.
-     */
-    public int getCount() {
-	return getEntry().count;
-    }
-
-    /**
-     *
-     * @param id
-     */
-    final public void setForm(FormID id) {
-	getEntry().entry = id;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public FormID getForm() {
-	return getEntry().entry;
-    }
+	/**
+	 *
+	 * @return
+	 */
+	public FormID getForm() {
+		return getEntry().entry;
+	}
 }

@@ -287,7 +287,7 @@ public class Mod implements Comparable, Iterable<GRUP> {
 	 *            Major Record to make a copy of and add to the mod.
 	 * @return The copied record.
 	 */
-	<T extends MajorRecord> T makeCopy(T m) {
+	<T extends MajorRecord<T>> T makeCopy(T m) {
 		m = m.copyOf(this);
 		GRUPs.get(GRUP_TYPE.valueOf(m.getType())).addRecord(m);
 		return m;
@@ -311,7 +311,7 @@ public class Mod implements Comparable, Iterable<GRUP> {
 	 *            EDID to assign to the new record. Make sure it's unique.
 	 * @return The copied record, or null if either parameter is null.
 	 */
-	public <T extends MajorRecord> T makeCopy(T m, String newEDID) {
+	public <T extends MajorRecord<T>> T makeCopy(T m, String newEDID) {
 		if (m == null || newEDID == null) {
 			return null;
 		}
@@ -1587,7 +1587,7 @@ public class Mod implements Comparable, Iterable<GRUP> {
 		}
 
 		@Override
-		SubRecord getNew(String type) {
+		HEDR getNew(String type) {
 			return new HEDR();
 		}
 

@@ -7,9 +7,9 @@ package skyproc;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.zip.DataFormatException;
-import lev.LImport;
-import lev.LOutFile;
+
 import lev.LFlags;
+import lev.LImport;
 import skyproc.exceptions.BadParameter;
 import skyproc.exceptions.BadRecord;
 
@@ -18,6 +18,7 @@ import skyproc.exceptions.BadRecord;
  *
  * @author Justin Swanson
  */
+@SuppressWarnings("serial")
 public class ALCH extends MagicItem {
 
 	// Static prototypes and definitions
@@ -138,11 +139,6 @@ public class ALCH extends MagicItem {
 
 	@Override
 	ALCH getNew() {
-		return new ALCH();
-	}
-
-	@Override
-	ALCH getNewMajorRecord() {
 		return new ALCH();
 	}
 

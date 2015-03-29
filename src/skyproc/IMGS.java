@@ -3,6 +3,7 @@ package skyproc;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.zip.DataFormatException;
+
 import lev.LImport;
 import lev.LOutFile;
 import lev.LShrinkArray;
@@ -14,6 +15,7 @@ import skyproc.exceptions.BadRecord;
  *
  * @author Plutoman101
  */
+@SuppressWarnings("serial")
 public class IMGS extends MajorRecord {
 
 	// Static prototypes and definitions
@@ -30,7 +32,7 @@ public class IMGS extends MajorRecord {
 		}
 	};
 
-	static final class HNAM extends SubRecord {
+	static final class HNAM extends SubRecord<HNAM> {
 
 		private float eyeAdaptSpeed = 0;
 		private float bloomRadius = 0;
@@ -49,7 +51,7 @@ public class IMGS extends MajorRecord {
 		}
 
 		@Override
-		SubRecord getNew(String type) {
+		HNAM getNew(String type) {
 			return new HNAM();
 		}
 
@@ -120,7 +122,7 @@ public class IMGS extends MajorRecord {
 		}
 	}
 
-	static final class CNAM extends SubRecord {
+	static final class CNAM extends SubRecord<CNAM> {
 
 		private float saturation = 0;
 		private float brightness = 0;
@@ -133,7 +135,7 @@ public class IMGS extends MajorRecord {
 		}
 
 		@Override
-		SubRecord getNew(String type) {
+		CNAM getNew(String type) {
 			return new CNAM();
 		}
 
@@ -186,7 +188,7 @@ public class IMGS extends MajorRecord {
 		}
 	}
 
-	static final class TNAM extends SubRecord {
+	static final class TNAM extends SubRecord<TNAM> {
 
 		private float red = 0;
 		private float green = 0;
@@ -200,7 +202,7 @@ public class IMGS extends MajorRecord {
 		}
 
 		@Override
-		SubRecord getNew(String type) {
+		TNAM getNew(String type) {
 			return new TNAM();
 		}
 
@@ -254,7 +256,7 @@ public class IMGS extends MajorRecord {
 		}
 	}
 
-	static final class DNAM extends SubRecord {
+	static final class DNAM extends SubRecord<DNAM> {
 
 		float DOFstrength = 0;
 		float DOFdistance = 0;
@@ -293,7 +295,7 @@ public class IMGS extends MajorRecord {
 		}
 
 		@Override
-		SubRecord getNew(String type) {
+		DNAM getNew(String type) {
 			return new DNAM();
 		}
 
