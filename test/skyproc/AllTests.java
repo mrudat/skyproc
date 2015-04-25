@@ -11,7 +11,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({ BodyTemplateTest.class, RecordTest.class, ModListingTest.class,
-		ModTest.class, ModExporterAbstractTest.class })
+		ModTest.class, ModExporterTest.class })
 public class AllTests {
 
 }

@@ -94,7 +94,7 @@ public class SkyProcTester {
 
 		SubStringPointer.shortNull = false;
 
-		FormID.allIDs.clear();
+		FormID.getAllIDs().clear();
 
 		SPProgressBarPlug.reset();
 		SPProgressBarPlug.setMax(types.length);
@@ -113,7 +113,7 @@ public class SkyProcTester {
 					break;
 				}
 				SPProgressBarPlug.setStatus("Validating DONE");
-				for (FormID id : FormID.allIDs) {
+				for (FormID id : FormID.getAllIDs()) {
 					if (!id.isNull() && id.getMaster() == null
 							&& !badIDs.contains(id)) {
 						System.out.println("A bad id: " + id);

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 
 import lev.LImport;
 import lev.Ln;
@@ -22,12 +23,15 @@ import lev.Ln;
 @SuppressWarnings("serial")
 public class FormID implements Comparable<FormID>, Serializable {
 
-	public static ArrayList<FormID> allIDs = new ArrayList<>();
+	private static final ArrayList<FormID> allIDs = new ArrayList<>();
+	
 	/**
 	 * FormID to compare to when determining NULL formIDs.
 	 */
 	public static final FormID NULL = new FormID();
+	
 	byte[] form = new byte[4];
+
 	ModListing master = null;
 
 	/**
@@ -296,11 +300,10 @@ public class FormID implements Comparable<FormID>, Serializable {
 				return false;
 			}
 		}
-		if ((this.master == null) ? (other.master != null) : !this.master
-				.equals(other.master)) {
+		/*if (!Arrays.equals(form, other.form)) {
 			return false;
-		}
-		return true;
+		}*/
+		return Objects.equals(this.master, other.master);
 	}
 
 	/**
@@ -318,7 +321,7 @@ public class FormID implements Comparable<FormID>, Serializable {
 	@Override
 	public int hashCode() {
 		int hash = 7;
-		hash = 97 * hash + Arrays.hashCode(Arrays.copyOf(this.form, 3));
+		hash = 97 * hash + (this.form != null ? Arrays.hashCode(Arrays.copyOf(this.form, 3)) : 0 );
 		hash = 97 * hash + (this.master != null ? this.master.hashCode() : 0);
 		return hash;
 	}
@@ -331,4 +334,12 @@ public class FormID implements Comparable<FormID>, Serializable {
 			return master.compareTo(rhs.master);
 		}
 	}
+
+	/**
+	 * @return the allIDs
+	 */
+	public static ArrayList<FormID> getAllIDs() {
+		return allIDs;
+	}
+
 }

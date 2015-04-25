@@ -4,12 +4,6 @@
  */
 package skyproc;
 
-import skyproc.genenums.WardState;
-import skyproc.genenums.Gender;
-import skyproc.genenums.CrimeType;
-import skyproc.genenums.CastingSource;
-import skyproc.genenums.Axis;
-
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -18,6 +12,11 @@ import java.util.Objects;
 
 import lev.LImport;
 import skyproc.Condition.RunOnType;
+import skyproc.genenums.Axis;
+import skyproc.genenums.CastingSource;
+import skyproc.genenums.CrimeType;
+import skyproc.genenums.Gender;
+import skyproc.genenums.WardState;
 
 /**
  *
@@ -27,56 +26,77 @@ import skyproc.Condition.RunOnType;
 class ConditionOption implements Serializable {
 
 	int index;
+
+	/**
+	 * @see Condition.CondFlag
+	 */
 	Enum script;
+
 	RunOnType runType = RunOnType.Subject;
+
 	FormID reference = new FormID();
+
 	byte[] p3placeholder = { (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF };
 
 	public static ConditionOption getOption(int index) {
 		Enum script = Condition.getScript(index);
 		if (script == null) {
-			SPGlobal.logError("Conditions", "Did not have a script for index: " + index);
+			SPGlobal.logError("Conditions", "Did not have a script for index: "
+					+ index);
 		}
 		ConditionOption out = null;
-		Class c = script.getClass();
+		Class<? extends Enum> c = script.getClass();
 		if (c.equals(Condition.P_NoParams.CanFlyHere.getClass())) {
 			out = new ConditionOption();
 		} else if (c.equals(Condition.P_Axis.GetAngle.getClass())) {
 			out = new Cond_Axis();
-		} else if (c.equals(Condition.P_FormID_CastingSource.IsCurrentSpell.getClass())) {
+		} else if (c.equals(Condition.P_FormID_CastingSource.IsCurrentSpell
+				.getClass())) {
 			out = new Cond_FormID_CastingSource();
 		} else if (c.equals(Condition.P_FormID_Int.GetStageDone.getClass())) {
 			out = new Cond_FormID_Int();
-		} else if (c.equals(Condition.P_FormID_FormID.GetFactionCombatReaction.getClass())) {
+		} else if (c.equals(Condition.P_FormID_FormID.GetFactionCombatReaction
+				.getClass())) {
 			out = new Cond_FormID_FormID();
-		} else if (c.equals(Condition.P_CastingSource_FormID.SpellHasKeyword.getClass())) {
+		} else if (c.equals(Condition.P_CastingSource_FormID.SpellHasKeyword
+				.getClass())) {
 			out = new Cond_CastingSource_FormID();
 		} else if (c.equals(Condition.P_FormID.CanPayCrimeGold.getClass())) {
 			out = new Cond_FormID();
 		} else if (c.equals(Condition.P_Gender.GetIsSex.getClass())) {
 			out = new Cond_Gender();
-		} else if (c.equals(Condition.P_CastingSource.GetCurrentCastingType.getClass())) {
+		} else if (c.equals(Condition.P_CastingSource.GetCurrentCastingType
+				.getClass())) {
 			out = new Cond_CastingSource();
 		} else if (c.equals(Condition.P_Int_FormID_Int.GetEventData.getClass())) {
 			out = new Cond_Int_FormID_Int();
-		} else if (c.equals(Condition.P_Int_FormID.GetKeywordDataForAlias.getClass())) {
+		} else if (c.equals(Condition.P_Int_FormID.GetKeywordDataForAlias
+				.getClass())) {
 			out = new Cond_Int_FormID();
 		} else if (c.equals(Condition.P_WardState.IsWardState.getClass())) {
 			out = new Cond_WardState();
-		} else if (c.equals(Condition.P_Int.EPModSkillUsage_IsAdvanceAction.getClass())) {
+		} else if (c.equals(Condition.P_Int.EPModSkillUsage_IsAdvanceAction
+				.getClass())) {
 			out = new Cond_Int();
-		} else if (c.equals(Condition.P_FormID_String.GetQuestVariable.getClass())) {
+		} else if (c.equals(Condition.P_FormID_String.GetQuestVariable
+				.getClass())) {
 			out = new Cond_FormID_String();
-		} else if (c.equals(Condition.P_FormID_Axis.GetRelativeAngle.getClass())) {
+		} else if (c
+				.equals(Condition.P_FormID_Axis.GetRelativeAngle.getClass())) {
 			out = new Cond_FormID_Axis();
 		} else if (c.equals(Condition.P_FormID_CrimeType.GetCrime.getClass())) {
 			out = new Cond_FormID_CrimeType();
-		} else if (c.equals(Condition.P_FormID_Float.GetWithinDistance.getClass())) {
+		} else if (c.equals(Condition.P_FormID_Float.GetWithinDistance
+				.getClass())) {
 			out = new Cond_FormID_Float();
-		} else if (c.equals(Condition.P_Int_Int.GetPlayerControlsDisabled.getClass())) {
+		} else if (c.equals(Condition.P_Int_Int.GetPlayerControlsDisabled
+				.getClass())) {
 			out = new Cond_Int_Int();
-		} else if (c.equals(Condition.P_String.GetGraphVariableFloat.getClass())) {
+		} else if (c
+				.equals(Condition.P_String.GetGraphVariableFloat.getClass())) {
 			out = new Cond_String();
+		} else {
+			throw new RuntimeException("not yet implemented");
 		}
 		out.index = index;
 		out.script = script;
@@ -97,7 +117,8 @@ class ConditionOption implements Serializable {
 		reference.parseData(in, srcMod);
 		parseParam3(in, srcMod);
 		if (SPGlobal.logging()) {
-			SPGlobal.logMod(srcMod, this.getClass().getSimpleName(), "  Run Type: " + runType + ", Reference: " + reference);
+			SPGlobal.logMod(srcMod, this.getClass().getSimpleName(),
+					"  Run Type: " + runType + ", Reference: " + reference);
 		}
 	}
 
@@ -166,7 +187,8 @@ class ConditionOption implements Serializable {
 			p1.parseData(in, srcMod);
 			in.skip(4);
 			if (SPGlobal.logging()) {
-				SPGlobal.logMod(srcMod, this.getClass().getSimpleName(), "  FormID: " + p1);
+				SPGlobal.logMod(srcMod, this.getClass().getSimpleName(),
+						"  FormID: " + p1);
 			}
 		}
 
@@ -197,10 +219,7 @@ class ConditionOption implements Serializable {
 				return false;
 			}
 			final Cond_FormID other = (Cond_FormID) obj;
-			if (!Objects.equals(this.p1, other.p1)) {
-				return false;
-			}
-			return true;
+			return Objects.equals(this.p1, other.p1);
 		}
 
 		@Override
@@ -233,7 +252,8 @@ class ConditionOption implements Serializable {
 			axis = Axis.get(in.extractString(1));
 			in.skip(7);
 			if (SPGlobal.logging()) {
-				SPGlobal.logMod(srcMod, this.getClass().getSimpleName(), "  Axis: " + axis);
+				SPGlobal.logMod(srcMod, this.getClass().getSimpleName(),
+						"  Axis: " + axis);
 			}
 		}
 
@@ -254,7 +274,7 @@ class ConditionOption implements Serializable {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (!equals(obj)) {
+			if (!super.equals(obj)) {
 				return false;
 			}
 			if (obj == null) {
@@ -310,7 +330,8 @@ class ConditionOption implements Serializable {
 			p1.parseData(in, srcMod);
 			source = CastingSource.values()[in.extractInt(4)];
 			if (SPGlobal.logging()) {
-				SPGlobal.logMod(srcMod, this.getClass().getSimpleName(), "  FormID: " + p1 + ", Casting Source: " + source);
+				SPGlobal.logMod(srcMod, this.getClass().getSimpleName(),
+						"  FormID: " + p1 + ", Casting Source: " + source);
 			}
 		}
 
@@ -331,7 +352,7 @@ class ConditionOption implements Serializable {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (!equals(obj)) {
+			if (!super.equals(obj)) {
 				return false;
 			}
 			if (obj == null) {
@@ -354,7 +375,8 @@ class ConditionOption implements Serializable {
 		public int hashCode() {
 			int hash = super.hashCode();
 			hash = 89 * hash + Objects.hashCode(this.p1);
-			hash = 89 * hash + (this.source != null ? this.source.hashCode() : 0);
+			hash = 89 * hash
+					+ (this.source != null ? this.source.hashCode() : 0);
 			return hash;
 		}
 	}
@@ -391,7 +413,8 @@ class ConditionOption implements Serializable {
 			source = CastingSource.values()[in.extractInt(4)];
 			p2.parseData(in, srcMod);
 			if (SPGlobal.logging()) {
-				SPGlobal.logMod(srcMod, this.getClass().getSimpleName(), "  Casting Source: " + source + ", FormID: " + p2);
+				SPGlobal.logMod(srcMod, this.getClass().getSimpleName(),
+						"  Casting Source: " + source + ", FormID: " + p2);
 			}
 		}
 
@@ -412,7 +435,7 @@ class ConditionOption implements Serializable {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (!equals(obj)) {
+			if (!super.equals(obj)) {
 				return false;
 			}
 			if (obj == null) {
@@ -434,7 +457,8 @@ class ConditionOption implements Serializable {
 		@Override
 		public int hashCode() {
 			int hash = super.hashCode();
-			hash = 67 * hash + (this.source != null ? this.source.hashCode() : 0);
+			hash = 67 * hash
+					+ (this.source != null ? this.source.hashCode() : 0);
 			hash = 67 * hash + Objects.hashCode(this.p2);
 			return hash;
 		}
@@ -472,7 +496,8 @@ class ConditionOption implements Serializable {
 			p1.parseData(in, srcMod);
 			p2 = in.extractInt(4);
 			if (SPGlobal.logging()) {
-				SPGlobal.logMod(srcMod, this.getClass().getSimpleName(), "  FormID: " + p1 + ", Int: " + p2);
+				SPGlobal.logMod(srcMod, this.getClass().getSimpleName(),
+						"  FormID: " + p1 + ", Int: " + p2);
 			}
 		}
 
@@ -493,7 +518,7 @@ class ConditionOption implements Serializable {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (!equals(obj)) {
+			if (!super.equals(obj)) {
 				return false;
 			}
 			if (obj == null) {
@@ -555,7 +580,8 @@ class ConditionOption implements Serializable {
 			p1.parseData(in, srcMod);
 			p2.parseData(in, srcMod);
 			if (SPGlobal.logging()) {
-				SPGlobal.logMod(srcMod, this.getClass().getSimpleName(), "  FormID 1: " + p1 + ", FormID 2: " + p2);
+				SPGlobal.logMod(srcMod, this.getClass().getSimpleName(),
+						"  FormID 1: " + p1 + ", FormID 2: " + p2);
 			}
 		}
 
@@ -576,7 +602,7 @@ class ConditionOption implements Serializable {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (!equals(obj)) {
+			if (!super.equals(obj)) {
 				return false;
 			}
 			if (obj == null) {
@@ -626,7 +652,8 @@ class ConditionOption implements Serializable {
 			g = Gender.values()[in.extractInt(4)];
 			in.skip(4);
 			if (SPGlobal.logging()) {
-				SPGlobal.logMod(srcMod, this.getClass().getSimpleName(), "  Gender: " + g);
+				SPGlobal.logMod(srcMod, this.getClass().getSimpleName(),
+						"  Gender: " + g);
 			}
 		}
 
@@ -647,7 +674,7 @@ class ConditionOption implements Serializable {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (!equals(obj)) {
+			if (!super.equals(obj)) {
 				return false;
 			}
 			if (obj == null) {
@@ -693,7 +720,8 @@ class ConditionOption implements Serializable {
 			source = CastingSource.values()[in.extractInt(4)];
 			in.skip(4);
 			if (SPGlobal.logging()) {
-				SPGlobal.logMod(srcMod, this.getClass().getSimpleName(), "  Casting Source: " + source);
+				SPGlobal.logMod(srcMod, this.getClass().getSimpleName(),
+						"  Casting Source: " + source);
 			}
 		}
 
@@ -714,7 +742,7 @@ class ConditionOption implements Serializable {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (!equals(obj)) {
+			if (!super.equals(obj)) {
 				return false;
 			}
 			if (obj == null) {
@@ -733,7 +761,8 @@ class ConditionOption implements Serializable {
 		@Override
 		public int hashCode() {
 			int hash = super.hashCode();
-			hash = 23 * hash + (this.source != null ? this.source.hashCode() : 0);
+			hash = 23 * hash
+					+ (this.source != null ? this.source.hashCode() : 0);
 			return hash;
 		}
 	}
@@ -777,7 +806,8 @@ class ConditionOption implements Serializable {
 			p1 = in.extractInt(4);
 			p2.parseData(in, srcMod);
 			if (SPGlobal.logging()) {
-				SPGlobal.logMod(srcMod, this.getClass().getSimpleName(), "  Int 1: " + p1 + ", FormID: " + p1 + ", Int 2: " + p3);
+				SPGlobal.logMod(srcMod, this.getClass().getSimpleName(),
+						"  Int 1: " + p1 + ", FormID: " + p1 + ", Int 2: " + p3);
 			}
 		}
 
@@ -803,7 +833,7 @@ class ConditionOption implements Serializable {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (!equals(obj)) {
+			if (!super.equals(obj)) {
 				return false;
 			}
 			if (obj == null) {
@@ -867,7 +897,8 @@ class ConditionOption implements Serializable {
 			p1 = in.extractInt(4);
 			p2.parseData(in, srcMod);
 			if (SPGlobal.logging()) {
-				SPGlobal.logMod(srcMod, this.getClass().getSimpleName(), "  Int: " + p1 + ", FormID: " + p2);
+				SPGlobal.logMod(srcMod, this.getClass().getSimpleName(),
+						"  Int: " + p1 + ", FormID: " + p2);
 			}
 		}
 
@@ -888,7 +919,7 @@ class ConditionOption implements Serializable {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (!equals(obj)) {
+			if (!super.equals(obj)) {
 				return false;
 			}
 			if (obj == null) {
@@ -938,7 +969,8 @@ class ConditionOption implements Serializable {
 			state = WardState.values()[in.extractInt(4)];
 			in.skip(4);
 			if (SPGlobal.logging()) {
-				SPGlobal.logMod(srcMod, this.getClass().getSimpleName(), "  Ward State: " + state);
+				SPGlobal.logMod(srcMod, this.getClass().getSimpleName(),
+						"  Ward State: " + state);
 			}
 		}
 
@@ -959,7 +991,7 @@ class ConditionOption implements Serializable {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (!equals(obj)) {
+			if (!super.equals(obj)) {
 				return false;
 			}
 			if (obj == null) {
@@ -1005,7 +1037,8 @@ class ConditionOption implements Serializable {
 			p1 = in.extractInt(4);
 			in.skip(4);
 			if (SPGlobal.logging()) {
-				SPGlobal.logMod(srcMod, this.getClass().getSimpleName(), "  Int: " + p1);
+				SPGlobal.logMod(srcMod, this.getClass().getSimpleName(),
+						"  Int: " + p1);
 			}
 		}
 
@@ -1026,7 +1059,7 @@ class ConditionOption implements Serializable {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (!equals(obj)) {
+			if (!super.equals(obj)) {
 				return false;
 			}
 			if (obj == null) {
@@ -1061,7 +1094,8 @@ class ConditionOption implements Serializable {
 
 		Cond_FormID_String(FormID id, String s) {
 			p1 = id;
-			p2 = new byte[] { (byte) 0x2e, (byte) 0xe2, (byte) 0x9d, (byte) 0xf0 };
+			p2 = new byte[] { (byte) 0x2e, (byte) 0xe2, (byte) 0x9d,
+					(byte) 0xf0 };
 		}
 
 		@Override
@@ -1082,7 +1116,8 @@ class ConditionOption implements Serializable {
 			p1.parseData(in, srcMod);
 			p2 = in.extract(4);
 			if (SPGlobal.logging()) {
-				SPGlobal.logMod(srcMod, this.getClass().getSimpleName(), "  FormID: " + p1);
+				SPGlobal.logMod(srcMod, this.getClass().getSimpleName(),
+						"  FormID: " + p1);
 			}
 		}
 
@@ -1103,7 +1138,7 @@ class ConditionOption implements Serializable {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (!equals(obj)) {
+			if (!super.equals(obj)) {
 				return false;
 			}
 			if (obj == null) {
@@ -1164,7 +1199,8 @@ class ConditionOption implements Serializable {
 			a = Axis.get(in.extractString(1));
 			in.skip(3);
 			if (SPGlobal.logging()) {
-				SPGlobal.logMod(srcMod, this.getClass().getSimpleName(), "  FormID: " + p1 + ", Axis: " + a);
+				SPGlobal.logMod(srcMod, this.getClass().getSimpleName(),
+						"  FormID: " + p1 + ", Axis: " + a);
 			}
 		}
 
@@ -1185,7 +1221,7 @@ class ConditionOption implements Serializable {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (!equals(obj)) {
+			if (!super.equals(obj)) {
 				return false;
 			}
 			if (obj == null) {
@@ -1245,7 +1281,8 @@ class ConditionOption implements Serializable {
 			p1.parseData(in, srcMod);
 			c = CrimeType.values()[in.extractInt(4)];
 			if (SPGlobal.logging()) {
-				SPGlobal.logMod(srcMod, this.getClass().getSimpleName(), "  FormID: " + p1 + ", Crime Type: " + c);
+				SPGlobal.logMod(srcMod, this.getClass().getSimpleName(),
+						"  FormID: " + p1 + ", Crime Type: " + c);
 			}
 		}
 
@@ -1266,7 +1303,7 @@ class ConditionOption implements Serializable {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (!equals(obj)) {
+			if (!super.equals(obj)) {
 				return false;
 			}
 			if (obj == null) {
@@ -1326,7 +1363,8 @@ class ConditionOption implements Serializable {
 			p1.parseData(in, srcMod);
 			f = in.extractFloat();
 			if (SPGlobal.logging()) {
-				SPGlobal.logMod(srcMod, this.getClass().getSimpleName(), "  FormID: " + p1 + ", Float: " + f);
+				SPGlobal.logMod(srcMod, this.getClass().getSimpleName(),
+						"  FormID: " + p1 + ", Float: " + f);
 			}
 		}
 
@@ -1347,7 +1385,7 @@ class ConditionOption implements Serializable {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (!equals(obj)) {
+			if (!super.equals(obj)) {
 				return false;
 			}
 			if (obj == null) {
@@ -1399,7 +1437,8 @@ class ConditionOption implements Serializable {
 			i1 = in.extractInt(4);
 			i2 = in.extractInt(4);
 			if (SPGlobal.logging()) {
-				SPGlobal.logMod(srcMod, this.getClass().getSimpleName(), "  Int 1: " + i1 + ", Int 2: " + i2);
+				SPGlobal.logMod(srcMod, this.getClass().getSimpleName(),
+						"  Int 1: " + i1 + ", Int 2: " + i2);
 			}
 		}
 
@@ -1420,7 +1459,7 @@ class ConditionOption implements Serializable {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (!equals(obj)) {
+			if (!super.equals(obj)) {
 				return false;
 			}
 			if (obj == null) {
@@ -1456,7 +1495,8 @@ class ConditionOption implements Serializable {
 		}
 
 		Cond_String(String s) {
-			p1 = new byte[] { (byte) 0x2e, (byte) 0xe2, (byte) 0x9d, (byte) 0xf0 };
+			p1 = new byte[] { (byte) 0x2e, (byte) 0xe2, (byte) 0x9d,
+					(byte) 0xf0 };
 		}
 
 		@Override
@@ -1486,7 +1526,7 @@ class ConditionOption implements Serializable {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (!equals(obj)) {
+			if (!super.equals(obj)) {
 				return false;
 			}
 			if (obj == null) {
@@ -1523,7 +1563,7 @@ class ConditionOption implements Serializable {
 			return false;
 		}
 		if (this.script != other.script) {
-			return false;
+				return false;
 		}
 		if (this.runType != other.runType) {
 			return false;
@@ -1547,4 +1587,5 @@ class ConditionOption implements Serializable {
 		hash = 97 * hash + Arrays.hashCode(this.p3placeholder);
 		return hash;
 	}
+
 }

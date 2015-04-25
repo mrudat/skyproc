@@ -31,7 +31,7 @@ public class ModListing extends SubRecord<ModListing> implements
 	/** Skyrim update ModListing. */
 	static ModListing update = new ModListing("Update.esm");
 
-	/** TODO what is this? */
+	/** Stores the name of the Mod */
 	SubString mast = SubString.getNew("MAST", true);
 
 	/**

@@ -11,8 +11,8 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 
 public class MockModExporter extends ModExporter {
 
-	ByteArrayOutputStream baos;
-	BufferedOutputStream output;
+	private ByteArrayOutputStream baos;
+	private BufferedOutputStream output;
 
 	public MockModExporter(File path, Mod mod) throws FileNotFoundException {
 		super(path, mod);

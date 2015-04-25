@@ -4,8 +4,12 @@
  */
 package skyproc.genenums;
 
-import java.io.*;
-import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Scanner;
 
 /**
@@ -1088,8 +1092,8 @@ public enum ActorValue {
 
 		String[] values = new String[256];
 
-		while (in.ready()) {
-			String line = in.readLine();
+		String line;
+		while ((line = in.readLine()) != null) {
 			log.write("Read Line: " + line);
 			Scanner tokenizer = new Scanner(line);
 			try {

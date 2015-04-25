@@ -740,7 +740,7 @@ public class SPGlobal {
 		SPDatabase.activePlugins.clear();
 		getDB().addedPlugins.clear();
 		getDB().modLookup.clear();
-		FormID.allIDs.clear();
+		FormID.getAllIDs().clear();
 		Consistency.clear();
 	}
 
