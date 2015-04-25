@@ -11,1107 +11,1113 @@ import java.util.Scanner;
 /**
  * A list of values commonly used by Skyrim for various purposes. UNKNOWN
  * entries are simply placeholders.
+ * 
  * @author Justin Swanson
  */
 public enum ActorValue {
 
-    /**
+	/**
      *
      */
-    Aggression,
-    /**
+	Aggression,
+	/**
      *
      */
-    Confidence,
-    /**
+	Confidence,
+	/**
      *
      */
-    Energy,
-    /**
+	Energy,
+	/**
      *
      */
-    Morality,
-    /**
+	Morality,
+	/**
      *
      */
-    Mood,
-    /**
+	Mood,
+	/**
      *
      */
-    Assistance,
-    /**
+	Assistance,
+	/**
      *
      */
-    OneHanded,
-    /**
+	OneHanded,
+	/**
      *
      */
-    TwoHanded,
-    /**
+	TwoHanded,
+	/**
      *
      */
-    Marksman,
-    /**
+	Marksman,
+	/**
      *
      */
-    Block,
-    /**
+	Block,
+	/**
      *
      */
-    Smithing,
-    /**
+	Smithing,
+	/**
      *
      */
-    HeavyArmor,
-    /**
+	HeavyArmor,
+	/**
      *
      */
-    LightArmor,
-    /**
+	LightArmor,
+	/**
      *
      */
-    Pickpocket,
-    /**
+	Pickpocket,
+	/**
      *
      */
-    Lockpicking,
-    /**
+	Lockpicking,
+	/**
      *
      */
-    Sneak,
-    /**
+	Sneak,
+	/**
      *
      */
-    Alchemy,
-    /**
+	Alchemy,
+	/**
      *
      */
-    Speechcraft,
-    /**
+	Speechcraft,
+	/**
      *
      */
-    Alteration,
-    /**
+	Alteration,
+	/**
      *
      */
-    Conjuration,
-    /**
+	Conjuration,
+	/**
      *
      */
-    Destruction,
-    /**
+	Destruction,
+	/**
      *
      */
-    Illusion,
-    /**
+	Illusion,
+	/**
      *
      */
-    Restoration,
-    /**
+	Restoration,
+	/**
      *
      */
-    Enchanting,
-    /**
+	Enchanting,
+	/**
      *
      */
-    Health,
-    /**
+	Health,
+	/**
      *
      */
-    Magicka,
-    /**
+	Magicka,
+	/**
      *
      */
-    Stamina,
-    /**
+	Stamina,
+	/**
      *
      */
-    HealRate,
-    /**
+	HealRate,
+	/**
      *
      */
-    MagickaRate,
-    /**
+	MagickaRate,
+	/**
      *
      */
-    StaminaRate,
-    /**
+	StaminaRate,
+	/**
      *
      */
-    SpeedMult,
-    /**
+	SpeedMult,
+	/**
      *
      */
-    InventoryWeight,
-    /**
+	InventoryWeight,
+	/**
      *
      */
-    CarryWeight,
-    /**
+	CarryWeight,
+	/**
      *
      */
-    DragonRend,
-    /**
+	DragonRend,
+	/**
      *
      */
-    UNKNOWN34,
-    /**
+	UNKNOWN34,
+	/**
      *
      */
-    UNKNOWN35,
-    /**
+	UNKNOWN35,
+	/**
      *
      */
-    UNKNOWN36,
-    /**
+	UNKNOWN36,
+	/**
      *
      */
-    UNKNOWN37,
-    /**
+	UNKNOWN37,
+	/**
      *
      */
-    UNKNOWN38,
-    /**
+	UNKNOWN38,
+	/**
      *
      */
-    DamageResist,
-    /**
+	DamageResist,
+	/**
      *
      */
-    PoisonResist,
-    /**
+	PoisonResist,
+	/**
      *
      */
-    FireResist,
-    /**
+	FireResist,
+	/**
      *
      */
-    ElectricResist,
-    /**
+	ElectricResist,
+	/**
      *
      */
-    FrostResist,
-    /**
+	FrostResist,
+	/**
      *
      */
-    MagicResist,
-    /**
+	MagicResist,
+	/**
      *
      */
-    DiseaseResist,
-    /**
+	DiseaseResist,
+	/**
      *
      */
-    UNKNOWN46,
-    /**
+	UNKNOWN46,
+	/**
      *
      */
-    UNKNOWN47,
-    /**
+	UNKNOWN47,
+	/**
      *
      */
-    UNKNOWN48,
-    /**
+	UNKNOWN48,
+	/**
      *
      */
-    UNKNOWN49,
-    /**
+	UNKNOWN49,
+	/**
      *
      */
-    UNKNOWN50,
-    /**
+	UNKNOWN50,
+	/**
      *
      */
-    UNKNOWN51,
-    /**
+	UNKNOWN51,
+	/**
      *
      */
-    UNKNOWN52,
-    /**
+	UNKNOWN52,
+	/**
      *
      */
-    Paralysis,
-    /**
+	Paralysis,
+	/**
      *
      */
-    Invisibility,
-    /**
+	Invisibility,
+	/**
      *
      */
-    NightEye,
-    /**
+	NightEye,
+	/**
      *
      */
-    DetectLifeRange,
-    /**
+	DetectLifeRange,
+	/**
      *
      */
-    WaterBreathing,
-    /**
+	WaterBreathing,
+	/**
      *
      */
-    WaterWalking,
-    /**
+	WaterWalking,
+	/**
      *
      */
-    IgnoreCrippledLimbs,
-    /**
+	IgnoreCrippledLimbs,
+	/**
      *
      */
-    Fame,
-    /**
+	Fame,
+	/**
      *
      */
-    Infamy,
-    /**
+	Infamy,
+	/**
      *
      */
-    JumpingBonus,
-    /**
+	JumpingBonus,
+	/**
      *
      */
-    WardPower,
-    /**
+	WardPower,
+	/**
      *
      */
-    RightItemCharge,
-    /**
+	RightItemCharge,
+	/**
      *
      */
-    LeftItemCharge,
-    /**
+	LeftItemCharge,
+	/**
      *
      */
-    EquippedItemCharge,
-    /**
+	EquippedItemCharge,
+	/**
      *
      */
-    ArmorPerks,
-    /**
+	ArmorPerks,
+	/**
      *
      */
-    ShieldPerks,
-    /**
+	ShieldPerks,
+	/**
      *
      */
-    Variable01,
-    /**
+	Variable01,
+	/**
      *
      */
-    Variable02,
-    /**
+	Variable02,
+	/**
      *
      */
-    Variable03,
-    /**
+	Variable03,
+	/**
      *
      */
-    Variable04,
-    /**
+	Variable04,
+	/**
      *
      */
-    Variable05,
-    /**
+	Variable05,
+	/**
      *
      */
-    Variable06,
-    /**
+	Variable06,
+	/**
      *
      */
-    Variable07,
-    /**
+	Variable07,
+	/**
      *
      */
-    Variable08,
-    /**
+	Variable08,
+	/**
      *
      */
-    Variable09,
-    /**
+	Variable09,
+	/**
      *
      */
-    Variable10,
-    /**
+	Variable10,
+	/**
      *
      */
-    FavorActive,
-    /**
+	FavorActive,
+	/**
      *
      */
-    FavorsPerDay,
-    /**
+	FavorsPerDay,
+	/**
      *
      */
-    FavorsPerDayTimer,
-    /**
+	FavorsPerDayTimer,
+	/**
      *
      */
-    EquippedStaffCharge,
-    /**
+	EquippedStaffCharge,
+	/**
      *
      */
-    AbsorbChance,
-    /**
+	AbsorbChance,
+	/**
      *
      */
-    Blindness,
-    /**
+	Blindness,
+	/**
      *
      */
-    WeaponSpeedMult,
-    /**
+	WeaponSpeedMult,
+	/**
      *
      */
-    ShoutRecoveryMult,
-    /**
+	ShoutRecoveryMult,
+	/**
      *
      */
-    BowStaggerBonus,
-    /**
+	BowStaggerBonus,
+	/**
      *
      */
-    Telekinesis,
-    /**
+	Telekinesis,
+	/**
      *
      */
-    FavorPointsBonus,
-    /**
+	FavorPointsBonus,
+	/**
      *
      */
-    LastBribedIntimidated,
-    /**
+	LastBribedIntimidated,
+	/**
      *
      */
-    LastFlattered,
-    /**
+	LastFlattered,
+	/**
      *
      */
-    MovementNoiseMult,
-    /**
+	MovementNoiseMult,
+	/**
      *
      */
-    BypassVendorStolenCheck,
-    /**
+	BypassVendorStolenCheck,
+	/**
      *
      */
-    BypassVendorKeywordCheck,
-    /**
+	BypassVendorKeywordCheck,
+	/**
      *
      */
-    WaitingForPlayer,
-    /**
+	WaitingForPlayer,
+	/**
      *
      */
-    OneHandedMod,
-    /**
+	OneHandedMod,
+	/**
      *
      */
-    TwoHandedMod,
-    /**
+	TwoHandedMod,
+	/**
      *
      */
-    MarksmanMod,
-    /**
+	MarksmanMod,
+	/**
      *
      */
-    BlockMod,
-    /**
+	BlockMod,
+	/**
      *
      */
-    SmithingMod,
-    /**
+	SmithingMod,
+	/**
      *
      */
-    HeavyArmorMod,
-    /**
+	HeavyArmorMod,
+	/**
      *
      */
-    LightArmorMod,
-    /**
+	LightArmorMod,
+	/**
      *
      */
-    PickPocketMod,
-    /**
+	PickPocketMod,
+	/**
      *
      */
-    LockpickingMod,
-    /**
+	LockpickingMod,
+	/**
      *
      */
-    SneakMod,
-    /**
+	SneakMod,
+	/**
      *
      */
-    AlchemyMod,
-    /**
+	AlchemyMod,
+	/**
      *
      */
-    SpeechcraftMod,
-    /**
+	SpeechcraftMod,
+	/**
      *
      */
-    AlterationMod,
-    /**
+	AlterationMod,
+	/**
      *
      */
-    ConjurationMod,
-    /**
+	ConjurationMod,
+	/**
      *
      */
-    DestructionMod,
-    /**
+	DestructionMod,
+	/**
      *
      */
-    IllusionMod,
-    /**
+	IllusionMod,
+	/**
      *
      */
-    RestorationMod,
-    /**
+	RestorationMod,
+	/**
      *
      */
-    EnchantingMod,
-    /**
+	EnchantingMod,
+	/**
      *
      */
-    OneHandedSkillAdvance,
-    /**
+	OneHandedSkillAdvance,
+	/**
      *
      */
-    TwoHandedSkillAdvance,
-    /**
+	TwoHandedSkillAdvance,
+	/**
      *
      */
-    MarksmanSkillAdvance,
-    /**
+	MarksmanSkillAdvance,
+	/**
      *
      */
-    BlockSkillAdvance,
-    /**
+	BlockSkillAdvance,
+	/**
      *
      */
-    SmithingSkillAdvance,
-    /**
+	SmithingSkillAdvance,
+	/**
      *
      */
-    HeavyArmorSkillAdvance,
-    /**
+	HeavyArmorSkillAdvance,
+	/**
      *
      */
-    LightArmorSkillAdvance,
-    /**
+	LightArmorSkillAdvance,
+	/**
      *
      */
-    PickPocketSkillAdvance,
-    /**
+	PickPocketSkillAdvance,
+	/**
      *
      */
-    LockpickingSkillAdvance,
-    /**
+	LockpickingSkillAdvance,
+	/**
      *
      */
-    SneakSkillAdvance,
-    /**
+	SneakSkillAdvance,
+	/**
      *
      */
-    AlchemySkillAdvance,
-    /**
+	AlchemySkillAdvance,
+	/**
      *
      */
-    SpeechcraftSkillAdvance,
-    /**
+	SpeechcraftSkillAdvance,
+	/**
      *
      */
-    AlterationSkillAdvance,
-    /**
+	AlterationSkillAdvance,
+	/**
      *
      */
-    ConjurationSkillAdvance,
-    /**
+	ConjurationSkillAdvance,
+	/**
      *
      */
-    DestructionSkillAdvance,
-    /**
+	DestructionSkillAdvance,
+	/**
      *
      */
-    IllusionSkillAdvance,
-    /**
+	IllusionSkillAdvance,
+	/**
      *
      */
-    RestorationSkillAdvance,
-    /**
+	RestorationSkillAdvance,
+	/**
      *
      */
-    EnchantingSkillAdvance,
-    /**
+	EnchantingSkillAdvance,
+	/**
      *
      */
-    LeftWeaponSpeedMult,
-    /**
+	LeftWeaponSpeedMult,
+	/**
      *
      */
-    DragonSouls,
-    /**
+	DragonSouls,
+	/**
      *
      */
-    CombatHealthRegenMult,
-    /**
+	CombatHealthRegenMult,
+	/**
      *
      */
-    OneHandedPowerMod,
-    /**
+	OneHandedPowerMod,
+	/**
      *
      */
-    TwoHandedPowerMod,
-    /**
+	TwoHandedPowerMod,
+	/**
      *
      */
-    MarksmanPowerMod,
-    /**
+	MarksmanPowerMod,
+	/**
      *
      */
-    BlockPowerMod,
-    /**
+	BlockPowerMod,
+	/**
      *
      */
-    SmithingPowerMod,
-    /**
+	SmithingPowerMod,
+	/**
      *
      */
-    HeavyArmorPowerMod,
-    /**
+	HeavyArmorPowerMod,
+	/**
      *
      */
-    LightArmorPowerMod,
-    /**
+	LightArmorPowerMod,
+	/**
      *
      */
-    PickPocketPowerMod,
-    /**
+	PickPocketPowerMod,
+	/**
      *
      */
-    LockpickingPowerMod,
-    /**
+	LockpickingPowerMod,
+	/**
      *
      */
-    SneakPowerMod,
-    /**
+	SneakPowerMod,
+	/**
      *
      */
-    AlchemyPowerMod,
-    /**
+	AlchemyPowerMod,
+	/**
      *
      */
-    SpeechcraftPowerMod,
-    /**
+	SpeechcraftPowerMod,
+	/**
      *
      */
-    AlterationPowerMod,
-    /**
+	AlterationPowerMod,
+	/**
      *
      */
-    ConjurationPowerMod,
-    /**
+	ConjurationPowerMod,
+	/**
      *
      */
-    DestructionPowerMod,
-    /**
+	DestructionPowerMod,
+	/**
      *
      */
-    IllusionPowerMod,
-    /**
+	IllusionPowerMod,
+	/**
      *
      */
-    RestorationPowerMod,
-    /**
+	RestorationPowerMod,
+	/**
      *
      */
-    EnchantingPowerMod,
-    /**
+	EnchantingPowerMod,
+	/**
      *
      */
-    UNKNOWN153,
-    /**
+	UNKNOWN153,
+	/**
      *
      */
-    AttackDamageMult,
-    /**
+	AttackDamageMult,
+	/**
      *
      */
-    HealRateMult,
-    /**
+	HealRateMult,
+	/**
      *
      */
-    MagickaRateMult,
-    /**
+	MagickaRateMult,
+	/**
      *
      */
-    StaminaRateMult,
-    /**
+	StaminaRateMult,
+	/**
      *
      */
-    UNKNOWN158,
-    /**
+	UNKNOWN158,
+	/**
      *
      */
-    UNKNOWN159,
-    /**
+	UNKNOWN159,
+	/**
      *
      */
-    UNKNOWN160,
-    /**
+	UNKNOWN160,
+	/**
      *
      */
-    UNKNOWN161,
-    /**
+	UNKNOWN161,
+	/**
      *
      */
-    UNKNOWN162,
-    /**
+	UNKNOWN162,
+	/**
      *
      */
-    ReflectDamage,
-    /**
+	ReflectDamage,
+	/**
      *
      */
-    UNKNOWN164,
-    /**
+	UNKNOWN164,
+	/**
      *
      */
-    UNKNOWN165,
-    /**
+	UNKNOWN165,
+	/**
      *
      */
-    UNKNOWN166,
-    /**
+	UNKNOWN166,
+	/**
      *
      */
-    UNKNOWN167,
-    /**
+	UNKNOWN167,
+	/**
      *
      */
-    UNKNOWN168,
-    /**
+	UNKNOWN168,
+	/**
      *
      */
-    UNKNOWN169,
-    /**
+	UNKNOWN169,
+	/**
      *
      */
-    UNKNOWN170,
-    /**
+	UNKNOWN170,
+	/**
      *
      */
-    UNKNOWN171,
-    /**
+	UNKNOWN171,
+	/**
      *
      */
-    UNKNOWN172,
-    /**
+	UNKNOWN172,
+	/**
      *
      */
-    UNKNOWN173,
-    /**
+	UNKNOWN173,
+	/**
      *
      */
-    UNKNOWN174,
-    /**
+	UNKNOWN174,
+	/**
      *
      */
-    UNKNOWN175,
-    /**
+	UNKNOWN175,
+	/**
      *
      */
-    UNKNOWN176,
-    /**
+	UNKNOWN176,
+	/**
      *
      */
-    UNKNOWN177,
-    /**
+	UNKNOWN177,
+	/**
      *
      */
-    UNKNOWN178,
-    /**
+	UNKNOWN178,
+	/**
      *
      */
-    UNKNOWN179,
-    /**
+	UNKNOWN179,
+	/**
      *
      */
-    UNKNOWN180,
-    /**
+	UNKNOWN180,
+	/**
      *
      */
-    UNKNOWN181,
-    /**
+	UNKNOWN181,
+	/**
      *
      */
-    UNKNOWN182,
-    /**
+	UNKNOWN182,
+	/**
      *
      */
-    UNKNOWN183,
-    /**
+	UNKNOWN183,
+	/**
      *
      */
-    UNKNOWN184,
-    /**
+	UNKNOWN184,
+	/**
      *
      */
-    UNKNOWN185,
-    /**
+	UNKNOWN185,
+	/**
      *
      */
-    UNKNOWN186,
-    /**
+	UNKNOWN186,
+	/**
      *
      */
-    UNKNOWN187,
-    /**
+	UNKNOWN187,
+	/**
      *
      */
-    UNKNOWN188,
-    /**
+	UNKNOWN188,
+	/**
      *
      */
-    UNKNOWN189,
-    /**
+	UNKNOWN189,
+	/**
      *
      */
-    UNKNOWN190,
-    /**
+	UNKNOWN190,
+	/**
      *
      */
-    UNKNOWN191,
-    /**
+	UNKNOWN191,
+	/**
      *
      */
-    UNKNOWN192,
-    /**
+	UNKNOWN192,
+	/**
      *
      */
-    UNKNOWN193,
-    /**
+	UNKNOWN193,
+	/**
      *
      */
-    UNKNOWN194,
-    /**
+	UNKNOWN194,
+	/**
      *
      */
-    UNKNOWN195,
-    /**
+	UNKNOWN195,
+	/**
      *
      */
-    UNKNOWN196,
-    /**
+	UNKNOWN196,
+	/**
      *
      */
-    UNKNOWN197,
-    /**
+	UNKNOWN197,
+	/**
      *
      */
-    UNKNOWN198,
-    /**
+	UNKNOWN198,
+	/**
      *
      */
-    UNKNOWN199,
-    /**
+	UNKNOWN199,
+	/**
      *
      */
-    UNKNOWN200,
-    /**
+	UNKNOWN200,
+	/**
      *
      */
-    UNKNOWN201,
-    /**
+	UNKNOWN201,
+	/**
      *
      */
-    UNKNOWN202,
-    /**
+	UNKNOWN202,
+	/**
      *
      */
-    UNKNOWN203,
-    /**
+	UNKNOWN203,
+	/**
      *
      */
-    UNKNOWN204,
-    /**
+	UNKNOWN204,
+	/**
      *
      */
-    UNKNOWN205,
-    /**
+	UNKNOWN205,
+	/**
      *
      */
-    UNKNOWN206,
-    /**
+	UNKNOWN206,
+	/**
      *
      */
-    UNKNOWN207,
-    /**
+	UNKNOWN207,
+	/**
      *
      */
-    UNKNOWN208,
-    /**
+	UNKNOWN208,
+	/**
      *
      */
-    UNKNOWN209,
-    /**
+	UNKNOWN209,
+	/**
      *
      */
-    UNKNOWN210,
-    /**
+	UNKNOWN210,
+	/**
      *
      */
-    UNKNOWN211,
-    /**
+	UNKNOWN211,
+	/**
      *
      */
-    UNKNOWN212,
-    /**
+	UNKNOWN212,
+	/**
      *
      */
-    UNKNOWN213,
-    /**
+	UNKNOWN213,
+	/**
      *
      */
-    UNKNOWN214,
-    /**
+	UNKNOWN214,
+	/**
      *
      */
-    UNKNOWN215,
-    /**
+	UNKNOWN215,
+	/**
      *
      */
-    UNKNOWN216,
-    /**
+	UNKNOWN216,
+	/**
      *
      */
-    UNKNOWN217,
-    /**
+	UNKNOWN217,
+	/**
      *
      */
-    UNKNOWN218,
-    /**
+	UNKNOWN218,
+	/**
      *
      */
-    UNKNOWN219,
-    /**
+	UNKNOWN219,
+	/**
      *
      */
-    UNKNOWN220,
-    /**
+	UNKNOWN220,
+	/**
      *
      */
-    UNKNOWN221,
-    /**
+	UNKNOWN221,
+	/**
      *
      */
-    UNKNOWN222,
-    /**
+	UNKNOWN222,
+	/**
      *
      */
-    UNKNOWN223,
-    /**
+	UNKNOWN223,
+	/**
      *
      */
-    UNKNOWN224,
-    /**
+	UNKNOWN224,
+	/**
      *
      */
-    UNKNOWN225,
-    /**
+	UNKNOWN225,
+	/**
      *
      */
-    UNKNOWN226,
-    /**
+	UNKNOWN226,
+	/**
      *
      */
-    UNKNOWN227,
-    /**
+	UNKNOWN227,
+	/**
      *
      */
-    UNKNOWN228,
-    /**
+	UNKNOWN228,
+	/**
      *
      */
-    UNKNOWN229,
-    /**
+	UNKNOWN229,
+	/**
      *
      */
-    UNKNOWN230,
-    /**
+	UNKNOWN230,
+	/**
      *
      */
-    UNKNOWN231,
-    /**
+	UNKNOWN231,
+	/**
      *
      */
-    UNKNOWN232,
-    /**
+	UNKNOWN232,
+	/**
      *
      */
-    UNKNOWN233,
-    /**
+	UNKNOWN233,
+	/**
      *
      */
-    UNKNOWN234,
-    /**
+	UNKNOWN234,
+	/**
      *
      */
-    UNKNOWN235,
-    /**
+	UNKNOWN235,
+	/**
      *
      */
-    UNKNOWN236,
-    /**
+	UNKNOWN236,
+	/**
      *
      */
-    UNKNOWN237,
-    /**
+	UNKNOWN237,
+	/**
      *
      */
-    UNKNOWN238,
-    /**
+	UNKNOWN238,
+	/**
      *
      */
-    UNKNOWN239,
-    /**
+	UNKNOWN239,
+	/**
      *
      */
-    UNKNOWN240,
-    /**
+	UNKNOWN240,
+	/**
      *
      */
-    UNKNOWN241,
-    /**
+	UNKNOWN241,
+	/**
      *
      */
-    UNKNOWN242,
-    /**
+	UNKNOWN242,
+	/**
      *
      */
-    UNKNOWN243,
-    /**
+	UNKNOWN243,
+	/**
      *
      */
-    UNKNOWN244,
-    /**
+	UNKNOWN244,
+	/**
      *
      */
-    UNKNOWN245,
-    /**
+	UNKNOWN245,
+	/**
      *
      */
-    UNKNOWN246,
-    /**
+	UNKNOWN246,
+	/**
      *
      */
-    UNKNOWN247,
-    /**
+	UNKNOWN247,
+	/**
      *
      */
-    UNKNOWN248,
-    /**
+	UNKNOWN248,
+	/**
      *
      */
-    UNKNOWN249,
-    /**
+	UNKNOWN249,
+	/**
      *
      */
-    UNKNOWN250,
-    /**
+	UNKNOWN250,
+	/**
      *
      */
-    UNKNOWN251,
-    /**
+	UNKNOWN251,
+	/**
      *
      */
-    UNKNOWN252,
-    /**
+	UNKNOWN252,
+	/**
      *
      */
-    UNKNOWN253,
-    /**
+	UNKNOWN253,
+	/**
      *
      */
-    UNKNOWN254,
-    /**
+	UNKNOWN254,
+	/**
      *
      */
-    UNKNOWN255,
-    /**
+	UNKNOWN255,
+	/**
      *
      */
-    UNKNOWN;
+	UNKNOWN;
 
-    /**
-     *
-     * @param in
-     * @return
-     */
-    static public int value(ActorValue in) {
-	if (in == UNKNOWN) {
-	    return -1;
-	} else {
-	    return in.ordinal();
-	}
-    }
-
-    /**
-     *
-     * @param in
-     * @return
-     */
-    static public ActorValue value(int in) {
-	if (in < ActorValue.values().length - 2 && in >= 0) {
-	    return ActorValue.values()[in];
-	} else {
-	    return UNKNOWN;
-	}
-    }
-
-    // Highly specific function meant to parse the function list from
-    // http://www.uesp.net/wiki/Tes5Mod:Actor_Value_Indices#Actor_Value_Codes as an easier way to generate
-    // code, rather than typing it all by hand.
-    // Shouldn't need to be used by you or any users.
-    static void parseData() throws FileNotFoundException, IOException {
-
-	String dir = "Validation Files/";
-	BufferedReader in = new BufferedReader(new FileReader(dir + "ActorValueSource.txt"));
-	BufferedWriter out = new BufferedWriter(new FileWriter(dir + "ActorValueOut.txt"));
-	BufferedWriter log = new BufferedWriter(new FileWriter(dir + "ActorValueOutLog.txt"));
-
-	String[] values = new String[256];
-
-	ArrayList<String> outStrings = new ArrayList<>();
-	while (in.ready()) {
-	    String line = in.readLine();
-	    log.write("Read Line: " + line);
-	    Scanner tokenizer = new Scanner(line);
-	    try {
-		int index = Integer.valueOf(tokenizer.next());
-		log.write("  Index: " + index);
-		String name = tokenizer.next();
-		log.write("  Ref: " + name);
-
-		// Generate string
-		values[index] = name;
-
-	    } catch (NumberFormatException ex) {
-		log.write("  Skipped");
-	    }
+	/**
+	 *
+	 * @param in
+	 * @return
+	 */
+	static public int value(ActorValue in) {
+		if (in == UNKNOWN) {
+			return -1;
+		} else {
+			return in.ordinal();
+		}
 	}
 
-	for (int i = 0; i < values.length; i++) {
-	    if (values[i] != null) {
-		out.write(values[i] + ",\n");
-	    } else {
-		out.write("UNKNOWN" + i + ",\n");
-	    }
+	/**
+	 *
+	 * @param in
+	 * @return
+	 */
+	static public ActorValue value(int in) {
+		if (in < ActorValue.values().length - 2 && in >= 0) {
+			return ActorValue.values()[in];
+		} else {
+			return UNKNOWN;
+		}
 	}
 
-	in.close();
-	out.close();
-	log.close();
-    }
+	// Highly specific function meant to parse the function list from
+	// http://www.uesp.net/wiki/Tes5Mod:Actor_Value_Indices#Actor_Value_Codes as
+	// an easier way to generate
+	// code, rather than typing it all by hand.
+	// Shouldn't need to be used by you or any users.
+	static void parseData() throws FileNotFoundException, IOException {
+
+		String dir = "Validation Files/";
+		BufferedReader in = new BufferedReader(new FileReader(dir
+				+ "ActorValueSource.txt"));
+		BufferedWriter out = new BufferedWriter(new FileWriter(dir
+				+ "ActorValueOut.txt"));
+		BufferedWriter log = new BufferedWriter(new FileWriter(dir
+				+ "ActorValueOutLog.txt"));
+
+		String[] values = new String[256];
+
+		while (in.ready()) {
+			String line = in.readLine();
+			log.write("Read Line: " + line);
+			Scanner tokenizer = new Scanner(line);
+			try {
+				int index = Integer.valueOf(tokenizer.next());
+				log.write("  Index: " + index);
+				String name = tokenizer.next();
+				log.write("  Ref: " + name);
+
+				// Generate string
+				values[index] = name;
+
+			} catch (NumberFormatException ex) {
+				log.write("  Skipped");
+			} finally {
+				tokenizer.close();
+			}
+		}
+
+		for (int i = 0; i < values.length; i++) {
+			if (values[i] != null) {
+				out.write(values[i] + ",\n");
+			} else {
+				out.write("UNKNOWN" + i + ",\n");
+			}
+		}
+
+		in.close();
+		out.close();
+		log.close();
+	}
 }
