@@ -44,7 +44,7 @@ public class Mod implements Comparable, Iterable<GRUP> {
 	 */
 	public Mod(ModListing info) {
 		init(info);
-		SPGlobal.getDB().add(this);
+		SPDatabase.add(this);
 	}
 
 	Mod(ModListing info, ByteBuffer headerInfo) throws Exception {
@@ -398,7 +398,7 @@ public class Mod implements Comparable, Iterable<GRUP> {
 		return getName();
 	}
 
-	ArrayList<FormID> allFormIDs() {
+	public ArrayList<FormID> allFormIDs() {
 		ArrayList<FormID> tmp = new ArrayList<>();
 		for (GRUP g : GRUPs.values()) {
 			tmp.addAll(g.allFormIDs());
@@ -701,7 +701,7 @@ public class Mod implements Comparable, Iterable<GRUP> {
 		Ln.moveFile(tmp, dest, false);
 	}
 
-	void export(File outPath) throws IOException, BadRecord {
+	public void export(File outPath) throws IOException, BadRecord {
 		SPGlobal.logMain("Mod Export", "Exporting " + this);
 		if (SPGlobal.logging()) {
 			SPGlobal.newSyncLog("Export - " + this.getName() + ".txt");
@@ -1541,7 +1541,8 @@ public class Mod implements Comparable, Iterable<GRUP> {
 		int numRecords;
 		int nextID;
 		static int firstAvailableID = 0xD62; // first available ID on empty CS
-												// plugins
+
+		// plugins
 
 		HEDR() {
 			super();

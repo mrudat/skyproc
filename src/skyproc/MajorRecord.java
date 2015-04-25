@@ -19,7 +19,8 @@ import skyproc.exceptions.BadRecord;
  * @author Justin Swanson
  */
 @SuppressWarnings("serial")
-public abstract class MajorRecord<M extends MajorRecord<M>> extends Record implements Serializable {
+public abstract class MajorRecord<M extends MajorRecord<M>> extends Record
+		implements Serializable {
 
 	static final SubPrototype majorProto = new SubPrototype() {
 
@@ -116,7 +117,7 @@ public abstract class MajorRecord<M extends MajorRecord<M>> extends Record imple
 		return out + "]";
 	}
 
-	M copyOf(Mod modToOriginateFrom) {
+	public M copyOf(Mod modToOriginateFrom) {
 		return copyOf(modToOriginateFrom, this.getEDID() + "_DUP");
 	}
 
@@ -159,7 +160,8 @@ public abstract class MajorRecord<M extends MajorRecord<M>> extends Record imple
 	}
 
 	@Override
-	void parseData(LImport in, Mod srcMod) throws BadRecord, DataFormatException, BadParameter {
+	void parseData(LImport in, Mod srcMod) throws BadRecord,
+			DataFormatException, BadParameter {
 		super.parseData(in, srcMod);
 
 		majorFlags = new LFlags(in.extract(4));
@@ -182,7 +184,8 @@ public abstract class MajorRecord<M extends MajorRecord<M>> extends Record imple
 		importSubRecords(in);
 	}
 
-	void importSubRecords(LImport in) throws BadRecord, DataFormatException, BadParameter {
+	void importSubRecords(LImport in) throws BadRecord, DataFormatException,
+			BadParameter {
 		subRecords.importSubRecords(in, srcMod);
 	}
 
@@ -200,7 +203,8 @@ public abstract class MajorRecord<M extends MajorRecord<M>> extends Record imple
 	 */
 	@Override
 	public String print() {
-		logMod(srcMod, getTypes().toString(), "Form ID: " + getFormStr() + ", EDID: " + getEDID());
+		logMod(srcMod, getTypes().toString(), "Form ID: " + getFormStr()
+				+ ", EDID: " + getEDID());
 		return "";
 	}
 

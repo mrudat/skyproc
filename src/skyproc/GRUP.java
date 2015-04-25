@@ -305,7 +305,7 @@ public class GRUP<T extends MajorRecord> extends SubRecord implements
 	 * @return Major Record with FormID equaling parameter. Null if one does not
 	 *         exist.
 	 */
-	public MajorRecord get(String edid) {
+	public T get(String edid) {
 		return edidRecords.get(edid);
 	}
 

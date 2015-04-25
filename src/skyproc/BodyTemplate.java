@@ -55,7 +55,8 @@ public class BodyTemplate extends SubShell {
 		}
 
 		@Override
-		void parseData(LImport in, Mod srcMod) throws BadRecord, DataFormatException, BadParameter {
+		void parseData(LImport in, Mod srcMod) throws BadRecord,
+				DataFormatException, BadParameter {
 			super.parseData(in, srcMod);
 			bodyParts = new LFlags(in.extract(4));
 			if (isBODT()) {

@@ -1,7 +1,16 @@
 package skyproc;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import lev.Ln;
 import lev.debug.LDebug;
 import skyproc.gui.SUMGUI;
@@ -19,12 +28,12 @@ public class SPGlobal {
 	static Mod globalPatchOut;
 	static SPLogger log;
 	static SPDatabase globalDatabase = new SPDatabase();
-	static boolean testing = false;
+	private static boolean testing = false;
 	static boolean streamMode = true;
 	static boolean deleteAfterExport = true;
 	static boolean mergeMode = false;
 	static boolean noModsAfter = true;
-	static boolean checkMissingMasters = true;
+	private static boolean checkMissingMasters = true;
 	static MajorRecord lastStreamed;
 	/*
 	 * Customizable Strings
@@ -101,7 +110,8 @@ public class SPGlobal {
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	public static File getSkyProcDocuments() throws FileNotFoundException, IOException {
+	public static File getSkyProcDocuments() throws FileNotFoundException,
+			IOException {
 		if (skyProcDocuments == null) {
 			File myDocs = SPGlobal.getMyDocumentsSkyrimFolder();
 			skyProcDocuments = new File(myDocs.getPath() + "\\SkyProc\\");
@@ -192,7 +202,8 @@ public class SPGlobal {
 	 * @return
 	 */
 	public static boolean isWhiteListed(ModListing m) {
-		return (modsWhiteList.isEmpty() && modsWhiteListStr.isEmpty()) || modsWhiteList.contains(m) || isWhiteListed(m.print());
+		return (modsWhiteList.isEmpty() && modsWhiteListStr.isEmpty())
+				|| modsWhiteList.contains(m) || isWhiteListed(m.print());
 	}
 
 	/**
@@ -201,7 +212,8 @@ public class SPGlobal {
 	 * @return
 	 */
 	public static boolean isWhiteListed(String name) {
-		return (modsWhiteList.isEmpty() && modsWhiteListStr.isEmpty()) || Ln.hasAnyKeywords(name, modsWhiteListStr);
+		return (modsWhiteList.isEmpty() && modsWhiteListStr.isEmpty())
+				|| Ln.hasAnyKeywords(name, modsWhiteListStr);
 	}
 
 	/**
@@ -284,7 +296,8 @@ public class SPGlobal {
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	static public File getMyDocumentsSkyrimFolder() throws FileNotFoundException, IOException {
+	static public File getMyDocumentsSkyrimFolder()
+			throws FileNotFoundException, IOException {
 		return getSkyrimINI().getParentFile();
 	}
 
@@ -297,10 +310,12 @@ public class SPGlobal {
 	 */
 	static public File getSkyrimINI() throws FileNotFoundException, IOException {
 		File myDocuments = Ln.getMyDocuments();
-		File ini = new File(myDocuments.getPath() + "//My Games//Skyrim//Skyrim.ini");
+		File ini = new File(myDocuments.getPath()
+				+ "//My Games//Skyrim//Skyrim.ini");
 
 		// See if there's a manual override
-		File override = new File(SPGlobal.pathToInternalFiles + "Skyrim-INI-Location.txt");
+		File override = new File(SPGlobal.pathToInternalFiles
+				+ "Skyrim-INI-Location.txt");
 		if (override.exists()) {
 			SPGlobal.log(header, "Skyrim.ini override file exists: " + override);
 			BufferedReader in = new BufferedReader(new FileReader(override));
@@ -309,16 +324,21 @@ public class SPGlobal {
 				SPGlobal.log(header, "Skyrim.ini location override: " + iniTmp);
 				ini = iniTmp;
 			} else {
-				SPGlobal.log(header, "Skyrim.ini location override thought to be in: " + iniTmp + ", but it did not exist.");
+				SPGlobal.log(header,
+						"Skyrim.ini location override thought to be in: "
+								+ iniTmp + ", but it did not exist.");
 			}
 			in.close();
 		}
 
 		if (!ini.exists()) {
-			SPGlobal.logMain(header, "Skyrim.ini believed to be in: " + ini + ". But it does not exist.  Locating manually.");
-			ini = Ln.manualFindFile("your Skyrim.ini file.", new File(SPGlobal.pathToInternalFiles + "SkyrimINIlocation.txt"));
+			SPGlobal.logMain(header, "Skyrim.ini believed to be in: " + ini
+					+ ". But it does not exist.  Locating manually.");
+			ini = Ln.manualFindFile("your Skyrim.ini file.", new File(
+					SPGlobal.pathToInternalFiles + "SkyrimINIlocation.txt"));
 		} else if (SPGlobal.logging()) {
-			SPGlobal.logMain(header, "Skyrim.ini believed to be in: " + ini + ". File exists.");
+			SPGlobal.logMain(header, "Skyrim.ini believed to be in: " + ini
+					+ ". File exists.");
 		}
 		return ini;
 	}
@@ -336,25 +356,39 @@ public class SPGlobal {
 
 			// If XP
 			if (appDataFolder == null) {
-				SPGlobal.logError(header, "Can't locate local app data folder directly, probably running XP.");
+				SPGlobal.logError(header,
+						"Can't locate local app data folder directly, probably running XP.");
 				appDataFolder = System.getenv("APPDATA");
 
 				// If Messed Up
 				if (appDataFolder == null) {
-					SPGlobal.logError(header, "Can't locate local app data folder.");
-					appDataFolder = Ln.manualFindFile("your Plugins.txt file.\nThis is usually found in your Local Application Data folder.\n" + "You may need to turn on hidden folders to see it.",
-							new File(SPGlobal.pathToInternalFiles + "PluginsListLocation.txt")).getPath();
-					appDataFolder = appDataFolder.substring(0, appDataFolder.lastIndexOf("\\"));
+					SPGlobal.logError(header,
+							"Can't locate local app data folder.");
+					appDataFolder = Ln
+							.manualFindFile(
+									"your Plugins.txt file.\nThis is usually found in your Local Application Data folder.\n"
+											+ "You may need to turn on hidden folders to see it.",
+									new File(SPGlobal.pathToInternalFiles
+											+ "PluginsListLocation.txt"))
+							.getPath();
+					appDataFolder = appDataFolder.substring(0,
+							appDataFolder.lastIndexOf("\\"));
 				} else {
-					SPGlobal.logMain(header, "APPDATA returned: ", appDataFolder, "     Shaving off the \\Application Data.");
-					appDataFolder = appDataFolder.substring(0, appDataFolder.lastIndexOf("\\"));
-					SPGlobal.logMain(header, "path now reads: ", appDataFolder, "     appending \\Local Settings\\Application Data");
-					appDataFolder = appDataFolder + "\\Local Settings\\Application Data";
+					SPGlobal.logMain(header, "APPDATA returned: ",
+							appDataFolder,
+							"     Shaving off the \\Application Data.");
+					appDataFolder = appDataFolder.substring(0,
+							appDataFolder.lastIndexOf("\\"));
+					SPGlobal.logMain(header, "path now reads: ", appDataFolder,
+							"     appending \\Local Settings\\Application Data");
+					appDataFolder = appDataFolder
+							+ "\\Local Settings\\Application Data";
 					SPGlobal.logMain(header, "path now reads: ", appDataFolder);
 				}
 			}
 			appDataFolder += "\\Skyrim";
-			SPGlobal.logMain(header, SPGlobal.gameName + " App data thought to be found at: ", appDataFolder);
+			SPGlobal.logMain(header, SPGlobal.gameName
+					+ " App data thought to be found at: ", appDataFolder);
 		}
 		return appDataFolder;
 	}
@@ -366,14 +400,19 @@ public class SPGlobal {
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	static public String getPluginsTxt() throws FileNotFoundException, IOException {
+	static public String getPluginsTxt() throws FileNotFoundException,
+			IOException {
 		String pluginsFile = getSkyrimAppData() + "\\plugins.txt";
 		File pluginListPath = new File(pluginsFile);
 		if (!pluginListPath.exists()) {
-			SPGlobal.logMain(header, SPGlobal.gameName + " Plugin file location wrong. Locating manually.");
+			SPGlobal.logMain(header, SPGlobal.gameName
+					+ " Plugin file location wrong. Locating manually.");
 			pluginsFile = Ln
-					.manualFindFile("your Plugins.txt file.\nThis is usually found in your Local Application Data folder.\n" + "You may need to turn on hidden folders to see it.", new File(SPGlobal.pathToInternalFiles + "PluginsListLocation.txt"))
-					.getPath();
+					.manualFindFile(
+							"your Plugins.txt file.\nThis is usually found in your Local Application Data folder.\n"
+									+ "You may need to turn on hidden folders to see it.",
+							new File(SPGlobal.pathToInternalFiles
+									+ "PluginsListLocation.txt")).getPath();
 		}
 		return pluginsFile;
 	}
@@ -387,7 +426,8 @@ public class SPGlobal {
 		String loadorderFile = getSkyrimAppData() + "\\loadorder.txt";
 		File loadorderPath = new File(loadorderFile);
 		if (!loadorderPath.exists()) {
-			throw new FileNotFoundException("Load Order Text file does not exist at: " + loadorderFile);
+			throw new FileNotFoundException(
+					"Load Order Text file does not exist at: " + loadorderFile);
 		}
 		return loadorderFile;
 	}
@@ -475,8 +515,9 @@ public class SPGlobal {
 	 * @param m
 	 *            Record that was blocked.
 	 */
-	public static void logBlocked(String header, String reason, MajorRecord m) {
-		log.logSpecial(SPLogger.SpecialTypes.BLOCKED, header, "Blocked " + m + " for reason: " + reason);
+	public static void logBlocked(String header, String reason, MajorRecord<?> m) {
+		log.logSpecial(SPLogger.SpecialTypes.BLOCKED, header, "Blocked " + m
+				+ " for reason: " + reason);
 	}
 
 	/**
@@ -665,7 +706,8 @@ public class SPGlobal {
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	public static void redirectSystemOutStream() throws FileNotFoundException, IOException {
+	public static void redirectSystemOutStream() throws FileNotFoundException,
+			IOException {
 		if (log == null) {
 			createGlobalLog();
 		}
@@ -718,6 +760,36 @@ public class SPGlobal {
 		return pathToDebug;
 	}
 
+	/**
+	 * @return the testing
+	 */
+	public static boolean isTesting() {
+		return testing;
+	}
+
+	/**
+	 * @param testing
+	 *            the testing to set
+	 */
+	public static void setTesting(boolean testing) {
+		SPGlobal.testing = testing;
+	}
+
+	/**
+	 * @return the checkMissingMasters
+	 */
+	public static boolean isCheckMissingMasters() {
+		return checkMissingMasters;
+	}
+
+	/**
+	 * @param checkMissingMasters
+	 *            the checkMissingMasters to set
+	 */
+	public static void setCheckMissingMasters(boolean checkMissingMasters) {
+		SPGlobal.checkMissingMasters = checkMissingMasters;
+	}
+
 	// Debug Globals
 	/**
 	 * Turns off messages about which record is currently being streamed.
@@ -742,4 +814,6 @@ public class SPGlobal {
 	 * Prints to the sync log<br>
 	 */
 	public static boolean debugModMerge = false;
+
+	public static Lock globalLock = new ReentrantLock();
 }

@@ -4,8 +4,18 @@
  */
 package skyproc.gui;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -15,17 +25,32 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
+
 import lev.Ln;
 import lev.debug.LDebug;
-import lev.gui.*;
+import lev.gui.LButton;
+import lev.gui.LCheckBox;
+import lev.gui.LHelpPanel;
+import lev.gui.LImagePane;
+import lev.gui.LLabel;
+import lev.gui.LProgressBarInterface;
+import lev.gui.LSaveFile;
+import lev.gui.Lg;
 import lev.gui.resources.LFonts;
 import lev.gui.resources.LImages;
+import skyproc.GRUP_TYPE;
+import skyproc.Mod;
+import skyproc.ModListing;
+import skyproc.NiftyFunc;
+import skyproc.SPDatabase;
+import skyproc.SPGlobal;
 import skyproc.SPGlobal.Language;
-import skyproc.*;
+import skyproc.SPImporter;
 import skyproc.exceptions.MissingMaster;
 
 /**
@@ -34,6 +59,7 @@ import skyproc.exceptions.MissingMaster;
  *
  * @author Justin Swanson
  */
+@SuppressWarnings("serial")
 public class SUMGUI extends JFrame {
 
     static JFrame singleton = null;
@@ -44,23 +70,34 @@ public class SUMGUI extends JFrame {
     /**
      * Bounds of the left column
      */
-    public final static Rectangle leftDimensions = new Rectangle(0, 0, 299, fullDimensions.height - 28); // For status update
+    public final static Rectangle leftDimensions = new Rectangle(0, 0, 299,
+	    fullDimensions.height - 28); // For
+					 // status
+					 // update
     /**
      * Bounds of the middle column
      */
-    public final static Rectangle middleDimensions = new Rectangle(leftDimensions.x + leftDimensions.width + 7, 0, 330, fullDimensions.height);
+    public final static Rectangle middleDimensions = new Rectangle(
+	    leftDimensions.x + leftDimensions.width + 7, 0, 330,
+	    fullDimensions.height);
     /**
      * Bounds of the right column
      */
-    public final static Rectangle rightDimensions = new Rectangle(middleDimensions.x + middleDimensions.width + 7, 0, 305, fullDimensions.height);
+    public final static Rectangle rightDimensions = new Rectangle(
+	    middleDimensions.x + middleDimensions.width + 7, 0, 305,
+	    fullDimensions.height);
     /**
      * Bounds of the two right columns
      */
-    public final static Rectangle middleRightDimensions = new Rectangle(middleDimensions.x, 0, rightDimensions.x + rightDimensions.width, fullDimensions.height);
+    public final static Rectangle middleRightDimensions = new Rectangle(
+	    middleDimensions.x, 0, rightDimensions.x + rightDimensions.width,
+	    fullDimensions.height);
     /**
      * Bounds of the two left columns
      */
-    public final static Rectangle middleLeftDimensions = new Rectangle(0, 0, middleDimensions.x + middleDimensions.width, middleDimensions.height);
+    public final static Rectangle middleLeftDimensions = new Rectangle(0, 0,
+	    middleDimensions.x + middleDimensions.width,
+	    middleDimensions.height);
     static final Color light = new Color(238, 233, 204);
     static final Color lightGray = new Color(190, 190, 190);
     static final Color darkGray = new Color(110, 110, 110);
@@ -78,12 +115,14 @@ public class SUMGUI extends JFrame {
      * Progress bar frame that pops up at the end when creating the patch.
      */
     static public SPProgressBarFrame progress = new SPProgressBarFrame(
-	    new Font("SansSerif", Font.PLAIN, 12), Color.lightGray,
-	    new Font("SansSerif", Font.PLAIN, 10), Color.lightGray);
+	    new Font("SansSerif", Font.PLAIN, 12), Color.lightGray, new Font(
+		    "SansSerif", Font.PLAIN, 10), Color.lightGray);
     /**
      * Help panel on the right column of the GUI.
      */
-    static public LHelpPanel helpPanel = new LHelpPanel(rightDimensions, new Font("Serif", Font.BOLD, 25), light, lightGray, LImages.arrow(true, false), 10);
+    static public LHelpPanel helpPanel = new LHelpPanel(rightDimensions,
+	    new Font("Serif", Font.BOLD, 25), light, lightGray, LImages.arrow(
+		    true, false), 10);
     static LImagePane backgroundPanel;
     static LLabel patchNeededLabel;
     static boolean needsPatching = false;
@@ -108,7 +147,8 @@ public class SUMGUI extends JFrame {
 	Dimension GUISIZE = new Dimension(954, 658);
 	setSize(GUISIZE);
 	Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-	setLocation(dim.width / 2 - GUISIZE.width / 2, dim.height / 2 - GUISIZE.height / 2);
+	setLocation(dim.width / 2 - GUISIZE.width / 2, dim.height / 2
+		- GUISIZE.height / 2);
 	setLayout(null);
 	addComponents();
 	SUMGUI.helpPanel.setHeaderFont(SUMmainFont.deriveFont(Font.PLAIN, 25));
@@ -160,17 +200,20 @@ public class SUMGUI extends JFrame {
     final void addComponents() {
 	try {
 
-	    backgroundPanel = new LImagePane(SUMGUI.class.getResource("background.jpg"));
+	    backgroundPanel = new LImagePane(
+		    SUMGUI.class.getResource("background.jpg"));
 	    super.add(backgroundPanel);
 
 	    startPatch = new LButton("Patch");
-	    startPatch.setLocation(backgroundPanel.getWidth() - startPatch.getWidth() - 5, 5);
+	    startPatch.setLocation(
+		    backgroundPanel.getWidth() - startPatch.getWidth() - 5, 5);
 	    startPatch.addActionListener(new ActionListener() {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 		    if (SPGlobal.logging()) {
-			SPGlobal.logMain(header, "Starting patch because user pressed patch.");
+			SPGlobal.logMain(header,
+				"Starting patch because user pressed patch.");
 		    }
 		    closeWindow();
 		}
@@ -192,8 +235,9 @@ public class SUMGUI extends JFrame {
 		@Override
 		public void mouseEntered(MouseEvent e) {
 		    helpPanel.setDefaultPos();
-		    helpPanel.setContent("This will create a patch if necessary and then exit the program.\n\n"
-			    + "NOTE: The big red exit button has the same effect.");
+		    helpPanel
+			    .setContent("This will create a patch if necessary and then exit the program.\n\n"
+				    + "NOTE: The big red exit button has the same effect.");
 		    helpPanel.setTitle("Start Patch and Exit");
 		    helpPanel.hideArrow();
 		}
@@ -205,7 +249,8 @@ public class SUMGUI extends JFrame {
 	    backgroundPanel.add(startPatch);
 
 	    cancelPatch = new LButton("Cancel");
-	    cancelPatch.setLocation(startPatch.getX() - cancelPatch.getWidth() - 5, 5);
+	    cancelPatch.setLocation(startPatch.getX() - cancelPatch.getWidth()
+		    - 5, 5);
 	    cancelPatch.addMouseListener(new MouseListener() {
 
 		@Override
@@ -222,14 +267,15 @@ public class SUMGUI extends JFrame {
 
 		@Override
 		public void mouseEntered(MouseEvent e) {
-		    helpPanel.setContent("This will save your current program settings and exit the program "
-			    + "immediately without generating a patch.\n\n"
-			    + ""
-			    + "After doing so, it is recommended that "
-			    + "you start this patcher again and patch correctly before "
-			    + "playing the game again.\n\n"
-			    + ""
-			    + "NOTE: Clicking exit on the progress bar while patching has the same effect.");
+		    helpPanel
+			    .setContent("This will save your current program settings and exit the program "
+				    + "immediately without generating a patch.\n\n"
+				    + ""
+				    + "After doing so, it is recommended that "
+				    + "you start this patcher again and patch correctly before "
+				    + "playing the game again.\n\n"
+				    + ""
+				    + "NOTE: Clicking exit on the progress bar while patching has the same effect.");
 		    helpPanel.setTitle("Cancel and Exit");
 		    helpPanel.hideArrow();
 		    helpPanel.setDefaultPos();
@@ -244,15 +290,18 @@ public class SUMGUI extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 		    if (SPGlobal.logging()) {
-			SPGlobal.logMain(header, "Closing program early because user cancelled.");
+			SPGlobal.logMain(header,
+				"Closing program early because user cancelled.");
 		    }
 		    exitProgram(false, true);
 		}
 	    });
 	    backgroundPanel.add(cancelPatch);
 
-	    forcePatch = new LCheckBox("Force Patch on Exit", SUMSmallFont, Color.GRAY);
-	    forcePatch.setLocation(rightDimensions.x + 10, cancelPatch.getY() + cancelPatch.getHeight() / 2 - forcePatch.getHeight() / 2);
+	    forcePatch = new LCheckBox("Force Patch on Exit", SUMSmallFont,
+		    Color.GRAY);
+	    forcePatch.setLocation(rightDimensions.x + 10, cancelPatch.getY()
+		    + cancelPatch.getHeight() / 2 - forcePatch.getHeight() / 2);
 	    forcePatch.setOffset(-4);
 	    forcePatch.addMouseListener(new MouseListener() {
 
@@ -270,9 +319,10 @@ public class SUMGUI extends JFrame {
 
 		@Override
 		public void mouseEntered(MouseEvent e) {
-		    helpPanel.setContent("This will force the patcher to create a patch, even if "
-			    + "it doesn't think it needs to.  Use this if you want to forcibly "
-			    + "remake the patch for any reason.");
+		    helpPanel
+			    .setContent("This will force the patcher to create a patch, even if "
+				    + "it doesn't think it needs to.  Use this if you want to forcibly "
+				    + "remake the patch for any reason.");
 		    helpPanel.setTitle("Force Patch On Exit");
 		    helpPanel.hideArrow();
 		    helpPanel.setDefaultPos();
@@ -284,7 +334,9 @@ public class SUMGUI extends JFrame {
 	    });
 	    backgroundPanel.add(forcePatch);
 
-	    patchNeededLabel = new LLabel("A patch will be generated upon exit.", SUMSmallFont, Color.GRAY);
+	    patchNeededLabel = new LLabel(
+		    "A patch will be generated upon exit.", SUMSmallFont,
+		    Color.GRAY);
 	    patchNeededLabel.setLocation(forcePatch.getLocation());
 	    patchNeededLabel.setVisible(false);
 	    backgroundPanel.add(patchNeededLabel);
@@ -303,7 +355,8 @@ public class SUMGUI extends JFrame {
 		public void windowClosing(WindowEvent arg0) {
 		    if (progress.getDefaultCloseOperation() == JFrame.DISPOSE_ON_CLOSE) {
 			if (SPGlobal.logging()) {
-			    SPGlobal.logMain(header, "Closing program early because progress bar was forced to close by user.");
+			    SPGlobal.logMain(header,
+				    "Closing program early because progress bar was forced to close by user.");
 			}
 			exitProgram(false, true);
 		    }
@@ -331,7 +384,8 @@ public class SUMGUI extends JFrame {
 
 	    statusUpdate = new JTextArea();
 	    statusUpdate.setSize(250, 18);
-	    statusUpdate.setLocation(5, getFrameHeight() - statusUpdate.getHeight());
+	    statusUpdate.setLocation(5,
+		    getFrameHeight() - statusUpdate.getHeight());
 	    statusUpdate.setForeground(Color.LIGHT_GRAY);
 	    statusUpdate.setOpaque(false);
 	    statusUpdate.setText("Started application");
@@ -339,8 +393,10 @@ public class SUMGUI extends JFrame {
 	    statusUpdate.setVisible(true);
 	    backgroundPanel.add(statusUpdate);
 
-	    skyProcLogo = new LImagePane(SPDefaultGUI.class.getResource("SkyProc Logo Small.png"));
-	    skyProcLogo.setLocation(5, statusUpdate.getY() - skyProcLogo.getHeight() - 5);
+	    skyProcLogo = new LImagePane(
+		    SPDefaultGUI.class.getResource("SkyProc Logo Small.png"));
+	    skyProcLogo.setLocation(5,
+		    statusUpdate.getY() - skyProcLogo.getHeight() - 5);
 	    backgroundPanel.add(skyProcLogo);
 
 	    helpPanel.setBounds(rightDimensions);
@@ -361,8 +417,10 @@ public class SUMGUI extends JFrame {
     /**
      * Opens and hooks onto a program that implements the SUM interface.
      *
-     * @param hook Program to open and hook to
-     * @param mainArgs Pass the main String args from your main function here
+     * @param hook
+     *            Program to open and hook to
+     * @param mainArgs
+     *            Pass the main String args from your main function here
      */
     public static void open(final SUM hook, String[] mainArgs) {
 	handleArgs(mainArgs);
@@ -426,8 +484,9 @@ public class SUMGUI extends JFrame {
 			}
 		    } catch (Exception e) {
 			SPGlobal.logException(e);
-			JOptionPane.showMessageDialog(null, "<html>There was an error running the program.<br>"
-				+ "Refer to the debug logs.</html>");
+			JOptionPane.showMessageDialog(null,
+				"<html>There was an error running the program.<br>"
+					+ "Refer to the debug logs.</html>");
 		    }
 		}
 	    }
@@ -436,7 +495,8 @@ public class SUMGUI extends JFrame {
 
     static void clean() {
 	ArrayList<File> files = new ArrayList<>();
-	files.add(new File(SPGlobal.pathToInternalFiles + "/Last Masterlist.txt"));
+	files.add(new File(SPGlobal.pathToInternalFiles
+		+ "/Last Masterlist.txt"));
 	files.add(new File(SPGlobal.pathToInternalFiles + "/Last Modlist.txt"));
 
 	for (File f : files) {
@@ -447,9 +507,15 @@ public class SUMGUI extends JFrame {
     }
 
     static void logStatus() {
-	SPGlobal.logMain("Status", hook.getName() + " version: " + hook.getVersion());
-	SPGlobal.logMain("Status", "Available Memory: " + Ln.toMB(Runtime.getRuntime().totalMemory()) + "MB");
-	SPGlobal.logMain("Status", "Max Memory: " + Ln.toMB(Runtime.getRuntime().maxMemory()) + "MB");
+	SPGlobal.logMain("Status",
+		hook.getName() + " version: " + hook.getVersion());
+	SPGlobal.logMain(
+		"Status",
+		"Available Memory: "
+			+ Ln.toMB(Runtime.getRuntime().totalMemory()) + "MB");
+	SPGlobal.logMain("Status",
+		"Max Memory: " + Ln.toMB(Runtime.getRuntime().maxMemory())
+			+ "MB");
     }
 
     static void loadBlockedMods(String path) {
@@ -483,10 +549,12 @@ public class SUMGUI extends JFrame {
     }
 
     static void handleArgs(String[] args) {
-	final ArrayList<String> arguments = Ln.toUpper(new ArrayList<>(Arrays.asList(args)));
+	final ArrayList<String> arguments = Ln.toUpper(new ArrayList<>(Arrays
+		.asList(args)));
 
 	if (SPGlobal.logging()) {
-	    SPGlobal.logMain("Run Location", "Program running from: " + (new File(".").getAbsolutePath()));
+	    SPGlobal.logMain("Run Location", "Program running from: "
+		    + (new File(".").getAbsolutePath()));
 	    for (String arg : arguments) {
 		SPGlobal.logMain("SUM", "Arg: " + arg);
 	    }
@@ -501,9 +569,11 @@ public class SUMGUI extends JFrame {
 	// Progress Bar Location
 	int index = arguments.indexOf("-PROGRESSLOCATION");
 	if (index != -1) {
-	    Dimension progressLoc = new Dimension(Integer.valueOf(arguments.get(index + 1).substring(1)),
-		    Integer.valueOf(arguments.get(index + 2).substring(1)));
-	    SUMGUI.progress.setCorrectLocation(progressLoc.width, progressLoc.height);
+	    Dimension progressLoc = new Dimension(Integer.valueOf(arguments
+		    .get(index + 1).substring(1)), Integer.valueOf(arguments
+		    .get(index + 2).substring(1)));
+	    SUMGUI.progress.setCorrectLocation(progressLoc.width,
+		    progressLoc.height);
 	}
 
 	justSettings = arguments.contains("-JUSTSETTINGS");
@@ -521,7 +591,8 @@ public class SUMGUI extends JFrame {
 
 	if (arguments.contains("-SUMBLOCK")) {
 	    try {
-		loadBlockedMods(SPGlobal.getSkyProcDocuments() + "\\SUM Mod Blocklist.txt");
+		loadBlockedMods(SPGlobal.getSkyProcDocuments()
+			+ "\\SUM Mod Blocklist.txt");
 	    } catch (IOException ex) {
 		SPGlobal.logException(ex);
 	    }
@@ -543,14 +614,16 @@ public class SUMGUI extends JFrame {
     }
 
     static void switchToSettingsMode() {
-	patchNeededLabel.setText("Change Settings Mode - No patch will be generated.");
+	patchNeededLabel
+		.setText("Change Settings Mode - No patch will be generated.");
 	patchNeededLabel.setVisible(true);
 	forcePatch.setVisible(false);
 	cancelPatch.setVisible(false);
 	startPatch.setVisible(false);
 
 	try {
-	    final LImagePane backToSUM = new LImagePane(SUMprogram.class.getResource("BackToSUMdark.png"));
+	    final LImagePane backToSUM = new LImagePane(
+		    SUMprogram.class.getResource("BackToSUMdark.png"));
 	    backToSUM.addMouseListener(new MouseListener() {
 
 		@Override
@@ -569,7 +642,8 @@ public class SUMGUI extends JFrame {
 		@Override
 		public void mouseEntered(MouseEvent e) {
 		    try {
-			backToSUM.setImage(SUMprogram.class.getResource("BackToSUM.png"));
+			backToSUM.setImage(SUMprogram.class
+				.getResource("BackToSUM.png"));
 		    } catch (IOException ex) {
 			SPGlobal.logException(ex);
 		    }
@@ -578,7 +652,8 @@ public class SUMGUI extends JFrame {
 		@Override
 		public void mouseExited(MouseEvent e) {
 		    try {
-			backToSUM.setImage(SUMprogram.class.getResource("BackToSUMdark.png"));
+			backToSUM.setImage(SUMprogram.class
+				.getResource("BackToSUMdark.png"));
 		    } catch (IOException ex) {
 			SPGlobal.logException(ex);
 		    }
@@ -638,27 +713,34 @@ public class SUMGUI extends JFrame {
 
 	if (forcePatch.isSelected() || testNeedsPatching(false)) {
 	    if (SPGlobal.logging()) {
-		SPGlobal.logMain("Needs Importing", "Needs importing because force patch was on or patch needed updating.");
+		SPGlobal.logMain("Needs Importing",
+			"Needs importing because force patch was on or patch needed updating.");
 	    }
 	    setPatchNeeded(true);
 	    return true;
 	}
 	try {
 	    // See if imported mods and last mod list are the same
-	    ArrayList<String> oldList = save.getStrings(SUMGUISettings.LastModlist);
+	    ArrayList<String> oldList = save
+		    .getStrings(SUMGUISettings.LastModlist);
 	    for (int i = 0; i < oldList.size(); i++) {
 		String oldString = oldList.get(i);
 		if (oldString.contains(SPDatabase.dateDelim)) {
-		    oldList.set(i, oldString.substring(0, oldString.indexOf(SPDatabase.dateDelim)));
+		    oldList.set(
+			    i,
+			    oldString.substring(0,
+				    oldString.indexOf(SPDatabase.dateDelim)));
 		}
 	    }
-	    ArrayList<ModListing> curList = new ArrayList<>(SPImporter.getActiveModList());
+	    ArrayList<ModListing> curList = new ArrayList<>(
+		    SPImporter.getActiveModList());
 	    curList.remove(hook.getListing());
 	    ArrayList<ModListing> curListTmp = new ArrayList<>(curList);
 
 	    if (curList.size() != oldList.size()) {
 		if (SPGlobal.logging()) {
-		    SPGlobal.logMain("Needs Importing", "Needs importing because last Modlist isn't the same size as current.");
+		    SPGlobal.logMain("Needs Importing",
+			    "Needs importing because last Modlist isn't the same size as current.");
 		}
 		return true;
 	    }
@@ -667,7 +749,10 @@ public class SUMGUI extends JFrame {
 		ModListing m = curListTmp.get(i);
 		if (!oldList.get(i).equals(m.print().toUpperCase())) {
 		    if (SPGlobal.logging()) {
-			SPGlobal.logMain("Needs Importing", "Needs importing because " + oldList.get(i) + " doesn't match " + m.print() + " at index " + i);
+			SPGlobal.logMain("Needs Importing",
+				"Needs importing because " + oldList.get(i)
+					+ " doesn't match " + m.print()
+					+ " at index " + i);
 		    }
 		    return true;
 		}
@@ -677,12 +762,14 @@ public class SUMGUI extends JFrame {
 	    ArrayList<String> changedMods = getChangedMods(true);
 	    if (changedMods.size() > 0) {
 		if (SPGlobal.logging()) {
-		    SPGlobal.logMain("Needs Importing", "Needs importing because " + changedMods.get(0) + " had its date changed.");
+		    SPGlobal.logMain("Needs Importing",
+			    "Needs importing because " + changedMods.get(0)
+				    + " had its date changed.");
 		}
 		return true;
 	    }
 
-	    //Don't need a patch, check for custom hook coding
+	    // Don't need a patch, check for custom hook coding
 	    return SUMGUI.hook.needsPatching();
 
 	} catch (IOException ex) {
@@ -700,7 +787,8 @@ public class SUMGUI extends JFrame {
 	// Check if patch exists
 	if (!SPGlobal.getGlobalPatch().exists()) {
 	    if (SPGlobal.logging()) {
-		SPGlobal.logMain(header, "Patch needed because no patch existed.");
+		SPGlobal.logMain(header,
+			"Patch needed because no patch existed.");
 	    }
 	    return true;
 	}
@@ -708,15 +796,19 @@ public class SUMGUI extends JFrame {
 	// Check if crashed earlier while needing to patch
 	if (save.getBool(SUMGUISettings.CrashState)) {
 	    if (SPGlobal.logging()) {
-		SPGlobal.logMain(header, "Patch needed because it closed prematurely earlier while needing to patch.");
+		SPGlobal.logMain(header,
+			"Patch needed because it closed prematurely earlier while needing to patch.");
 	    }
 	    return true;
 	}
 
-	//Check versions
-	if (save.getInt(SUMGUISettings.PrevVersion) != NiftyFunc.versionToNum(hook.getVersion())) {
+	// Check versions
+	if (save.getInt(SUMGUISettings.PrevVersion) != NiftyFunc
+		.versionToNum(hook.getVersion())) {
 	    if (SPGlobal.logging()) {
-		SPGlobal.logMain(header, "Needs update because of versioning: " + save.getInt(SUMGUISettings.PrevVersion) + " to " + hook.getVersion());
+		SPGlobal.logMain(header, "Needs update because of versioning: "
+			+ save.getInt(SUMGUISettings.PrevVersion) + " to "
+			+ hook.getVersion());
 	    }
 	    return true;
 	}
@@ -725,7 +817,8 @@ public class SUMGUI extends JFrame {
 	if (hook.hasSave()) {
 	    if (hook.getSave().checkFlagOr(0)) {
 		if (SPGlobal.logging()) {
-		    SPGlobal.logMain(header, "Patch needed because an important setting changed.");
+		    SPGlobal.logMain(header,
+			    "Patch needed because an important setting changed.");
 		}
 		return true;
 	    }
@@ -735,17 +828,20 @@ public class SUMGUI extends JFrame {
 	if (imported) {
 	    try {
 		// Compile old and new Master lists
-		ArrayList<String> oldMasterList = save.getStrings(SUMGUISettings.LastMasterlist);
+		ArrayList<String> oldMasterList = save
+			.getStrings(SUMGUISettings.LastMasterlist);
 
 		SPDatabase db = SPGlobal.getDB();
 		ArrayList<String> curImportedMods = new ArrayList<>();
 		for (ModListing m : db.getImportedModListings()) {
 		    curImportedMods.add(m.print().toUpperCase());
 		}
-		curImportedMods.remove(SPGlobal.getGlobalPatch().getName().toUpperCase());
+		curImportedMods.remove(SPGlobal.getGlobalPatch().getName()
+			.toUpperCase());
 
-		//Remove matching master mods, must be in order
-		ArrayList<String> curImportedModsTmp = new ArrayList<>(curImportedMods);
+		// Remove matching master mods, must be in order
+		ArrayList<String> curImportedModsTmp = new ArrayList<>(
+			curImportedMods);
 		for (int i = 0; i < curImportedModsTmp.size(); i++) {
 		    String curName = curImportedModsTmp.get(i);
 		    if (oldMasterList.contains(curName)) {
@@ -753,10 +849,12 @@ public class SUMGUI extends JFrame {
 			    if (oldMasterList.get(j).equalsIgnoreCase(curName)) {
 				oldMasterList.remove(j);
 				break;
-			    } else if (curImportedModsTmp.contains(oldMasterList.get(j))) {
-				//Matching mods out of order, need to patch
+			    } else if (curImportedModsTmp
+				    .contains(oldMasterList.get(j))) {
+				// Matching mods out of order, need to patch
 				if (SPGlobal.logging()) {
-				    SPGlobal.logMain(header, "Patch needed because masters from before were in a different order.");
+				    SPGlobal.logMain(header,
+					    "Patch needed because masters from before were in a different order.");
 				}
 				return true;
 			    }
@@ -764,10 +862,11 @@ public class SUMGUI extends JFrame {
 		    }
 		}
 
-		//If old masters are missing, need patch
+		// If old masters are missing, need patch
 		if (!oldMasterList.isEmpty()) {
 		    if (SPGlobal.logging()) {
-			SPGlobal.logMain(header, "Patch needed because old masters are missing:");
+			SPGlobal.logMain(header,
+				"Patch needed because old masters are missing:");
 			for (String s : oldMasterList) {
 			    SPGlobal.logMain(header, "   " + s);
 			}
@@ -775,18 +874,25 @@ public class SUMGUI extends JFrame {
 		    return true;
 		}
 
-
-		//Check mods that were imported last time for date modified changes, and remove them if they weren't changed.
+		// Check mods that were imported last time for date modified
+		// changes, and remove them if they weren't changed.
 		curImportedMods.removeAll(getChangedMods(false));
 
-		//Check new mods for any records patcher is interested in.  If interesting records found, need patch.
+		// Check new mods for any records patcher is interested in. If
+		// interesting records found, need patch.
 		for (String curString : curImportedMods) {
-		    Mod curMaster = SPGlobal.getDB().getMod(new ModListing(curString));
-		    ArrayList<GRUP_TYPE> contained = curMaster.getContainedTypes();
+		    Mod curMaster = SPGlobal.getDB().getMod(
+			    new ModListing(curString));
+		    ArrayList<GRUP_TYPE> contained = curMaster
+			    .getContainedTypes();
 		    for (GRUP_TYPE g : hook.importRequests()) {
 			if (contained.contains(g)) {
 			    if (SPGlobal.logging()) {
-				SPGlobal.logMain(header, "Patch needed because " + curMaster + " had records patch might be interested in.");
+				SPGlobal.logMain(
+					header,
+					"Patch needed because "
+						+ curMaster
+						+ " had records patch might be interested in.");
 			    }
 			    return true;
 			}
@@ -796,22 +902,25 @@ public class SUMGUI extends JFrame {
 	    } catch (IOException ex) {
 		SPGlobal.logException(ex);
 		if (SPGlobal.logging()) {
-		    SPGlobal.logMain(header, "Patch needed because exception was thrown in patch sensing code.");
+		    SPGlobal.logMain(header,
+			    "Patch needed because exception was thrown in patch sensing code.");
 		}
 		return true;
 	    }
 	}
 
-	//Don't need a patch, check for custom hook coding
+	// Don't need a patch, check for custom hook coding
 	if (SPGlobal.logging()) {
-	    SPGlobal.logMain(header, "Checking SUM hook to see if it wants to create a patch.");
+	    SPGlobal.logMain(header,
+		    "Checking SUM hook to see if it wants to create a patch.");
 	}
 	return SUMGUI.hook.needsPatching();
     }
 
     static ArrayList<String> getChangedMods(boolean changed) throws IOException {
-	//Compile old modlist and dates
-	ArrayList<String> oldModListRaw = save.getStrings(SUMGUISettings.LastModlist);
+	// Compile old modlist and dates
+	ArrayList<String> oldModListRaw = save
+		.getStrings(SUMGUISettings.LastModlist);
 	ArrayList<String> oldModList = new ArrayList<>(oldModListRaw.size());
 	ArrayList<Long> oldModListDate = new ArrayList<>(oldModListRaw.size());
 	ArrayList<String> out = new ArrayList<>();
@@ -837,8 +946,7 @@ public class SUMGUI extends JFrame {
 	    String modName = oldModListTmp.get(i);
 	    File modFile = new File(SPGlobal.pathToData + modName);
 	    boolean changedF = modFile.lastModified() != oldModListDate.get(i);
-	    if ((changed && changedF)
-		    || (!changed && !changedF)) {
+	    if ((changed && changedF) || (!changed && !changedF)) {
 		out.add(modName);
 	    }
 	}
@@ -854,7 +962,8 @@ public class SUMGUI extends JFrame {
 	if (!imported && !needsImporting()) {
 	    SPProgressBarPlug.done();
 	    if (SPGlobal.logging()) {
-		SPGlobal.logMain(header, "Closing program early because it does not need importing.");
+		SPGlobal.logMain(header,
+			"Closing program early because it does not need importing.");
 	    }
 	    exitProgram(false, true);
 	} else {
@@ -866,20 +975,26 @@ public class SUMGUI extends JFrame {
 
     /**
      * Immediately saves settings to file, closes debug logs, and exits the
-     * program.<br> NO patch is generated.
+     * program.<br>
+     * NO patch is generated.
      *
-     * @param generatedPatch True if a patch was generated before exiting.
-     * @param forceClose Will force close if true, otherwise will dispose and
-     * naturally let the program close (which may not happen, given certain
-     * circumstances)
+     * @param generatedPatch
+     *            True if a patch was generated before exiting.
+     * @param forceClose
+     *            Will force close if true, otherwise will dispose and naturally
+     *            let the program close (which may not happen, given certain
+     *            circumstances)
      */
     static public void exitProgram(boolean generatedPatch, boolean forceClose) {
 	SPGlobal.log(header, "Exit requested.");
 	if (generatedPatch) {
-	    save.setStrings(SUMGUISettings.LastModlist, Ln.toUpper(SPGlobal.getDB().getModListDates()));
-	    save.setStrings(SUMGUISettings.LastMasterlist, Ln.toUpper(SPGlobal.getGlobalPatch().getMastersStrings()));
+	    save.setStrings(SUMGUISettings.LastModlist,
+		    Ln.toUpper(SPGlobal.getDB().getModListDates()));
+	    save.setStrings(SUMGUISettings.LastMasterlist,
+		    Ln.toUpper(SPGlobal.getGlobalPatch().getMastersStrings()));
 	    save.setBool(SUMGUISettings.CrashState, false);
-	    save.setInt(SUMGUISettings.PrevVersion, NiftyFunc.versionToNum(hook.getVersion()));
+	    save.setInt(SUMGUISettings.PrevVersion,
+		    NiftyFunc.versionToNum(hook.getVersion()));
 	} else if (needsPatching) {
 	    save.setBool(SUMGUISettings.CrashState, true);
 	}
@@ -912,12 +1027,14 @@ public class SUMGUI extends JFrame {
 
 	@Override
 	public void run() {
-	    SPGlobal.logMain("START IMPORT THREAD", "Starting of process thread.");
+	    SPGlobal.logMain("START IMPORT THREAD",
+		    "Starting of process thread.");
 	    try {
 		if (!imported) {
 		    if (boss) {
 			bossWarning();
-			NiftyFunc.setupMissingPatchFiles(SPGlobal.getGlobalPatch());
+			NiftyFunc.setupMissingPatchFiles(SPGlobal
+				.getGlobalPatch());
 			NiftyFunc.modifyPluginsTxt(SPGlobal.getGlobalPatch());
 			NiftyFunc.runBOSS(true);
 		    }
@@ -929,7 +1046,8 @@ public class SUMGUI extends JFrame {
 		    }
 		}
 		if (exitRequested) {
-		    if (needsPatching || forcePatch == null || forcePatch.isSelected()) {
+		    if (needsPatching || forcePatch == null
+			    || forcePatch.isSelected()) {
 
 			// Check if required mods are loaded
 			for (ModListing m : hook.requiredMods()) {
@@ -938,8 +1056,11 @@ public class SUMGUI extends JFrame {
 				for (ModListing m2 : hook.requiredMods()) {
 				    modNames += "\n" + m2.toString();
 				}
-				JOptionPane.showMessageDialog(null, "This patcher requires the following mods, please add them to your load order:" + modNames);
-				SPGlobal.logMain("Required Mods", "Didn't have required mods.  Stopping patcher.");
+				JOptionPane.showMessageDialog(null,
+					"This patcher requires the following mods, please add them to your load order:"
+						+ modNames);
+				SPGlobal.logMain("Required Mods",
+					"Didn't have required mods.  Stopping patcher.");
 				SPProgressBarPlug.done();
 				exitProgram(true, true);
 			    }
@@ -953,16 +1074,21 @@ public class SUMGUI extends JFrame {
 			} catch (Exception ex) {
 			    // If something goes wrong, show an error message.
 			    SPGlobal.logException(ex);
-			    JOptionPane.showMessageDialog(null, "There was an error exporting the custom patch.\n(" + ex.getMessage() + ")\n\n" + errorMessage);
+			    JOptionPane.showMessageDialog(null,
+				    "There was an error exporting the custom patch.\n("
+					    + ex.getMessage() + ")\n\n"
+					    + errorMessage);
 			    exitProgram(false, true);
 			}
 
 			if (SPGlobal.logging()) {
-			    SPGlobal.logMain(header, "Closing program after successfully running patch.");
+			    SPGlobal.logMain(header,
+				    "Closing program after successfully running patch.");
 			}
 		    }
 		    if (SPGlobal.logging()) {
-			SPGlobal.logMain(header, "Closing program normally from thread.");
+			SPGlobal.logMain(header,
+				"Closing program normally from thread.");
 		    }
 		    SPProgressBarPlug.done();
 		    exitProgram(true, false);
@@ -970,17 +1096,21 @@ public class SUMGUI extends JFrame {
 	    } catch (MissingMaster m) {
 		System.err.println(m.toString());
 		SPGlobal.logException(m);
-		JOptionPane.showMessageDialog(null, m.toString() + "\n\n Please activate and try again.");
+		JOptionPane.showMessageDialog(null, m.toString()
+			+ "\n\n Please activate and try again.");
 		exitProgram(false, true);
 
 	    } catch (Throwable e) {
 		System.err.println(e.toString());
 		SPGlobal.logException(e);
-		JOptionPane.showMessageDialog(null, "There was an exception thrown during program execution: '" + e + "'\n\n" + errorMessage);
+		JOptionPane.showMessageDialog(null,
+			"There was an exception thrown during program execution: '"
+				+ e + "'\n\n" + errorMessage);
 
 		// if exception occurs
 		if (SPGlobal.logging()) {
-		    SPGlobal.logMain(header, "Closing program after UNSUCCESSFULLY running import/patch.");
+		    SPGlobal.logMain(header,
+			    "Closing program after UNSUCCESSFULLY running import/patch.");
 		}
 		exitProgram(false, true);
 	    }
@@ -1017,9 +1147,13 @@ public class SUMGUI extends JFrame {
 		    + "However, running BOSS is recommended.  "
 		    + "<a href=\"http://afterimagemetal.com/SkyProc/SUM%20Readme.html#BOSS\">Read this article why.</a><br><br>"
 		    + "Do you want to continue patching?</html>";
-	    int response = JOptionPane.showConfirmDialog(null, Lg.getQuickHTMLPane(message), "Running BOSS", JOptionPane.YES_NO_OPTION);
+	    int response = JOptionPane.showConfirmDialog(null,
+		    Lg.getQuickHTMLPane(message), "Running BOSS",
+		    JOptionPane.YES_NO_OPTION);
 	    if (response == JOptionPane.YES_OPTION) {
-		response = JOptionPane.showConfirmDialog(null, "Do you want to see this warning next time?", "Running BOSS", JOptionPane.YES_NO_OPTION);
+		response = JOptionPane.showConfirmDialog(null,
+			"Do you want to see this warning next time?",
+			"Running BOSS", JOptionPane.YES_NO_OPTION);
 		if (response == JOptionPane.NO_OPTION) {
 		    save.setBool(SUMGUISettings.BOSSWarning, false);
 		}
@@ -1032,7 +1166,8 @@ public class SUMGUI extends JFrame {
     /**
      * Starts importing desired mods. Runs code after it's finished.
      *
-     * @param codeToRunAfter Runnable object with code to execute after.
+     * @param codeToRunAfter
+     *            Runnable object with code to execute after.
      */
     public static void startImport(Runnable codeToRunAfter) {
 	if (!imported) {
@@ -1175,11 +1310,7 @@ public class SUMGUI extends JFrame {
 
     enum SUMGUISettings {
 
-	LastMasterlist,
-	LastModlist,
-	PrevVersion,
-	CrashState,
-	BOSSWarning;
+	LastMasterlist, LastModlist, PrevVersion, CrashState, BOSSWarning;
     }
 
     static class SUMGUISave extends LSaveFile {

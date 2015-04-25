@@ -4,12 +4,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.zip.DataFormatException;
+
 import lev.LImport;
-import lev.LOutFile;
-import lev.LShrinkArray;
 import skyproc.exceptions.BadParameter;
 import skyproc.exceptions.BadRecord;
 
+// TODO: Auto-generated Javadoc
 /**
  * A more accurate representation of a modname: A combination of mod name
  * without the suffix and its master flag. Skyrim.esm, for example, would be
@@ -17,14 +17,30 @@ import skyproc.exceptions.BadRecord;
  *
  * @author Justin Swanson
  */
-public class ModListing extends SubRecord<ModListing> implements Comparable {
+@SuppressWarnings("serial")
+public class ModListing extends SubRecord<ModListing> implements
+		Comparable<ModListing> {
 
-	private final static ArrayList<String> type = new ArrayList<>(Arrays.asList(new String[] { "MAST", "DATA" }));
+	/** The Constant type. */
+	private final static ArrayList<String> type = new ArrayList<>(
+			Arrays.asList(new String[] { "MAST", "DATA" }));
+
+	/** Base Skyrim ModListing. */
 	static ModListing skyrim = new ModListing("Skyrim.esm");
+
+	/** Skyrim update ModListing. */
 	static ModListing update = new ModListing("Update.esm");
 
+	/** TODO what is this? */
 	SubString mast = SubString.getNew("MAST", true);
+
+	/**
+	 * True if this is a master file. eg. "Skyrim.esm", false indicates a patch,
+	 * eg. "Unofficial Skyrim Patch.esp"
+	 */
 	boolean master = false;
+
+	/** The str hash. */
 	int strHash = 0;
 
 	/**
@@ -42,6 +58,7 @@ public class ModListing extends SubRecord<ModListing> implements Comparable {
 	}
 
 	/**
+	 * Instantiates a new mod listing.
 	 *
 	 * @param nameWithSuffix
 	 *            String containing the modname AND suffix. Eg "Skyrim.esm"
@@ -51,10 +68,19 @@ public class ModListing extends SubRecord<ModListing> implements Comparable {
 		setString(nameWithSuffix);
 	}
 
+	/**
+	 * Instantiates a new mod listing.
+	 */
 	ModListing() {
 		super();
 	}
 
+	/**
+	 * Sets the string.
+	 *
+	 * @param in
+	 *            the new string
+	 */
 	final void setString(String in) {
 		String upper = in.toUpperCase();
 		if (upper.contains(".ESM")) {
@@ -71,7 +97,7 @@ public class ModListing extends SubRecord<ModListing> implements Comparable {
 	/**
 	 * Prints the mod name and appropriate suffix (.esp or .esm)
 	 *
-	 * @return
+	 * @return the string
 	 */
 	@Override
 	public String print() {
@@ -83,18 +109,29 @@ public class ModListing extends SubRecord<ModListing> implements Comparable {
 	}
 
 	/**
+	 * Prints the mod name with no suffix.
 	 *
-	 * @return
+	 * @return the string
 	 */
 	public String printNoSuffix() {
 		return mast.print();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see skyproc.SubRecord#toString()
+	 */
 	@Override
 	public String toString() {
 		return print();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see skyproc.SubRecord#export(skyproc.ModExporter)
+	 */
 	@Override
 	void export(ModExporter out) throws IOException {
 		mast.string = print(); // Put the suffix in the record
@@ -105,8 +142,14 @@ public class ModListing extends SubRecord<ModListing> implements Comparable {
 		setString(print()); // Take suffix back out of record
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see skyproc.Record#parseData(lev.LImport, skyproc.Mod)
+	 */
 	@Override
-	final void parseData(LImport in, Mod srcMod) throws BadRecord, DataFormatException, BadParameter {
+	final void parseData(LImport in, Mod srcMod) throws BadRecord,
+			DataFormatException, BadParameter {
 		switch (getNextType(in)) {
 		case "MAST":
 			mast.parseData(in, srcMod);
@@ -114,25 +157,51 @@ public class ModListing extends SubRecord<ModListing> implements Comparable {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see skyproc.SubRecord#getNew(java.lang.String)
+	 */
 	@Override
 	ModListing getNew(String type_) {
 		return new ModListing();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see skyproc.Record#getContentLength(skyproc.ModExporter)
+	 */
 	@Override
 	int getContentLength(ModExporter out) {
 		return mast.getContentLength(out) + 14 + 4; // 14 for DATA, 4 for .esp
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see skyproc.Record#isValid()
+	 */
 	@Override
 	boolean isValid() {
 		return mast.isValid();
 	}
 
+	/**
+	 * Sets the master tag.
+	 *
+	 * @param in
+	 *            the new master tag
+	 */
 	void setMasterTag(Boolean in) {
 		master = in;
 	}
 
+	/**
+	 * Gets the master tag.
+	 *
+	 * @return the master tag
+	 */
 	boolean getMasterTag() {
 		return master;
 	}
@@ -158,7 +227,9 @@ public class ModListing extends SubRecord<ModListing> implements Comparable {
 			return false;
 		}
 		final ModListing other = (ModListing) obj;
-		if (this.mast != other.mast && (this.mast == null || !this.mast.equalsIgnoreCase(other.mast))) {
+		if (this.mast != other.mast
+				&& (this.mast == null || !this.mast
+						.equalsIgnoreCase(other.mast))) {
 			return false;
 		}
 		if (this.master != other.master) {
@@ -168,6 +239,7 @@ public class ModListing extends SubRecord<ModListing> implements Comparable {
 	}
 
 	/**
+	 * Hash code.
 	 *
 	 * @return A hashcode with modname and master flag incorperated.
 	 */
@@ -187,13 +259,13 @@ public class ModListing extends SubRecord<ModListing> implements Comparable {
 	 * 4) Remaining plugins are ordered in the same order they were created in
 	 * the code.
 	 *
-	 * @param o
-	 *            Another ModListing.
+	 * @param rhs
+	 *            the rhs
 	 * @return Whether this modlisting is >/==/< the parameter.
 	 */
 	@Override
-	public int compareTo(Object o) {
-		ModListing rhs = (ModListing) o;
+	public int compareTo(ModListing rhs) {
+		// ModListing rhs = (ModListing) o;
 		if (equals(rhs)) {
 			return 0;
 		}
@@ -229,7 +301,8 @@ public class ModListing extends SubRecord<ModListing> implements Comparable {
 			if (!rhsActive) {
 				return -1;
 			} else {
-				int comp = SPDatabase.activePlugins.indexOf(this) - SPDatabase.activePlugins.indexOf(rhs);
+				int comp = SPDatabase.activePlugins.indexOf(this)
+						- SPDatabase.activePlugins.indexOf(rhs);
 				if (comp != 0) {
 					return comp;
 				} else {
@@ -240,7 +313,8 @@ public class ModListing extends SubRecord<ModListing> implements Comparable {
 			if (rhsActive) {
 				return 1;
 			} else {
-				int comp = SPGlobal.getDB().addedPlugins.indexOf(this) - SPGlobal.getDB().addedPlugins.indexOf(rhs);
+				int comp = SPDatabase.addedPlugins.indexOf(this)
+						- SPDatabase.addedPlugins.indexOf(rhs);
 				if (comp != 0) {
 					return comp;
 				} else {
@@ -250,6 +324,11 @@ public class ModListing extends SubRecord<ModListing> implements Comparable {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see skyproc.Record#getTypes()
+	 */
 	@Override
 	ArrayList<String> getTypes() {
 		return type;

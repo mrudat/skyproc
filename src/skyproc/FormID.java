@@ -8,12 +8,9 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.zip.DataFormatException;
+
 import lev.LImport;
-import lev.LOutFile;
 import lev.Ln;
-import skyproc.exceptions.BadParameter;
-import skyproc.exceptions.BadRecord;
 
 /**
  * This class represents a FormID that distinguishes one record from another.
@@ -22,9 +19,10 @@ import skyproc.exceptions.BadRecord;
  *
  * @author Justin Swanson
  */
-public class FormID implements Comparable, Serializable {
+@SuppressWarnings("serial")
+public class FormID implements Comparable<FormID>, Serializable {
 
-	static ArrayList<FormID> allIDs = new ArrayList<>();
+	public static ArrayList<FormID> allIDs = new ArrayList<>();
 	/**
 	 * FormID to compare to when determining NULL formIDs.
 	 */
@@ -36,7 +34,7 @@ public class FormID implements Comparable, Serializable {
 	 * An empty FormID for easy NULL checking.
 	 */
 	FormID() {
-		if (SPGlobal.testing) {
+		if (SPGlobal.isTesting()) {
 			allIDs.add(this);
 		}
 	}
@@ -298,7 +296,8 @@ public class FormID implements Comparable, Serializable {
 				return false;
 			}
 		}
-		if ((this.master == null) ? (other.master != null) : !this.master.equals(other.master)) {
+		if ((this.master == null) ? (other.master != null) : !this.master
+				.equals(other.master)) {
 			return false;
 		}
 		return true;
@@ -324,17 +323,8 @@ public class FormID implements Comparable, Serializable {
 		return hash;
 	}
 
-	/**
-	 *
-	 * @param o
-	 * @return
-	 */
 	@Override
-	public int compareTo(Object o) {
-		if (o == null || getClass() != o.getClass()) {
-			return 0;
-		}
-		FormID rhs = (FormID) o;
+	public int compareTo(FormID rhs) {
 		if (master.equals(rhs.master)) {
 			return Ln.arrayToInt(form) - Ln.arrayToInt(rhs.form);
 		} else {

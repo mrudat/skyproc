@@ -14,32 +14,32 @@ import lev.LOutFile;
  */
 class ModExporter extends LOutFile {
 
-    private Mod exportMod;
-    private Mod srcMod;
-    private MajorRecord srcMajor;
+	private Mod exportMod;
+	private Mod srcMod;
+	private MajorRecord<?> srcMajor;
 
-    ModExporter (File path, Mod mod) throws FileNotFoundException {
-	super(path);
-	exportMod = mod;
-    }
+	ModExporter(File path, Mod mod) throws FileNotFoundException {
+		super(path);
+		exportMod = mod;
+	}
 
-    public Mod getExportMod() {
-	return exportMod;
-    }
+	public Mod getExportMod() {
+		return exportMod;
+	}
 
-    public void setSourceMod (Mod srcMod) {
-	this.srcMod = srcMod;
-    }
+	public void setSourceMod(Mod srcMod) {
+		this.srcMod = srcMod;
+	}
 
-    public Mod getSourceMod () {
-	return srcMod;
-    }
+	public Mod getSourceMod() {
+		return srcMod;
+	}
 
-    public void setSourceMajor(MajorRecord src) {
-	srcMajor = src;
-    }
+	public void setSourceMajor(MajorRecord<?> src) {
+		srcMajor = src;
+	}
 
-    public MajorRecord getSourceMajor() {
-	return srcMajor;
-    }
+	public MajorRecord<?> getSourceMajor() {
+		return srcMajor;
+	}
 }
