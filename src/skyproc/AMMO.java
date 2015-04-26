@@ -7,9 +7,9 @@ package skyproc;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.zip.DataFormatException;
-import lev.LImport;
-import lev.LOutFile;
+
 import lev.LFlags;
+import lev.LImport;
 import skyproc.exceptions.BadParameter;
 import skyproc.exceptions.BadRecord;
 
@@ -17,6 +17,7 @@ import skyproc.exceptions.BadRecord;
  *
  * @author Justin Swanson
  */
+@SuppressWarnings("serial")
 public class AMMO extends MajorRecordDescription {
 
 	// Static prototypes and definitions

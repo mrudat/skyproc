@@ -4,6 +4,7 @@ import java.io.*;
 import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.zip.DataFormatException;
+
 import lev.*;
 import skyproc.SPGlobal.Language;
 import skyproc.SubStringPointer.Files;
@@ -19,7 +20,7 @@ import skyproc.gui.SPProgressBarPlug;
  *
  * @author Justin Swanson
  */
-public class Mod implements Comparable, Iterable<GRUP> {
+public class Mod implements Comparable<Mod>, Iterable<GRUP> {
 
 	TES4 tes = new TES4();
 	ModListing modInfo;
@@ -212,7 +213,9 @@ public class Mod implements Comparable, Iterable<GRUP> {
 	}
 
 	void closeStreams() {
-		input.close();
+		if (input != null) {
+			input.close();
+		}
 		for (LImport c : stringStreams.values()) {
 			c.close();
 		}
@@ -1349,9 +1352,8 @@ public class Mod implements Comparable, Iterable<GRUP> {
 	 *         0: Mod is equal in load order (should not happen)
 	 */
 	@Override
-	public int compareTo(Object o) {
-		Mod rhs = (Mod) o;
-		return this.getInfo().compareTo(rhs.getInfo());
+	public int compareTo(Mod o) {
+		return this.getInfo().compareTo(o.getInfo());
 	}
 
 	/**
@@ -1374,10 +1376,8 @@ public class Mod implements Comparable, Iterable<GRUP> {
 			return false;
 		}
 		final Mod other = (Mod) obj;
-		if (!this.getName().equalsIgnoreCase(other.getName())) {
-			return false;
-		}
-		return true;
+		return Objects.compare(this.getName(), other.getName(),
+				(a, b) -> a.compareToIgnoreCase(b)) == 0;
 	}
 
 	/**

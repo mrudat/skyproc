@@ -1,18 +1,26 @@
 package skyproc;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 
 import lev.LImport;
+import lev.LShrinkArray;
+import nl.jqno.equalsverifier.EqualsVerifier;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -20,7 +28,10 @@ import skyproc.exceptions.BadRecord;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RecordTest {
-
+	
+	@Rule
+	public TemporaryFolder folder = new TemporaryFolder();
+	
 	@SuppressWarnings("serial")
 	private final class RecordTestRecord extends Record {
 		@Override
@@ -36,13 +47,13 @@ public class RecordTest {
 		@Override
 		ArrayList<String> getTypes() {
 			ArrayList<String> temp = new ArrayList<String>();
-			temp.add("DummyType");
+			temp.add("FAKE");
 			return temp;
 		}
 
 		@Override
 		int getSizeLength() {
-			return 4567;
+			return 4;
 		}
 
 		@Override
@@ -76,15 +87,16 @@ public class RecordTest {
 	@Test
 	public void testParseData() throws Exception {
 		Mod srcMod = mock(Mod.class);
-		LImport in = mock(LImport.class);
-		record.parseData(in, srcMod);
+		record.parseData(new LShrinkArray(getExpectedExport()), srcMod);
+		throw new RuntimeException("Not implemented yet");
 	}
 
 	@Test
 	public void testParseData2() throws Exception {
-		ByteBuffer in = ByteBuffer.allocate(1024);
+		ByteBuffer in = ByteBuffer.wrap(getExpectedExport());
 		Mod srcMod = mock(Mod.class);
 		record.parseData(in, srcMod);
+		throw new RuntimeException("Not implemented yet");
 	}
 
 	@Test
@@ -96,7 +108,7 @@ public class RecordTest {
 	public void testGetTypes() {
 		ArrayList<String> types = record.getTypes();
 		assertEquals(1, types.size());
-		assertEquals("DummyType", types.get(0));
+		assertEquals("FAKE", types.get(0));
 	}
 
 	@Test
@@ -109,14 +121,13 @@ public class RecordTest {
 	@Test
 	public void testGetType() {
 		String type = record.getType();
-		assertEquals("DummyType", type);
+		assertEquals("FAKE", type);
 	}
 
 	@Test
 	public void testGetNew() {
 		try {
-			@SuppressWarnings("unused")
-			Record new_record = record.getNew();
+			record.getNew();
 			fail();
 		} catch (UnsupportedOperationException e) {
 			assertEquals("Not supported yet.", e.getMessage());
@@ -126,8 +137,7 @@ public class RecordTest {
 	@Test
 	public void testGetNewRecord() {
 		try {
-			@SuppressWarnings("unused")
-			Record new_record = record.getNewRecord();
+			record.getNewRecord();
 			fail();
 		} catch (UnsupportedOperationException e) {
 			assertEquals("Not supported yet.", e.getMessage());
@@ -136,37 +146,60 @@ public class RecordTest {
 
 	@Test
 	public void testGetNextType() throws BadRecord {
-		LImport in = mock(LImport.class);
+		LImport in = new LShrinkArray(getExpectedExport());
 		String type = Record.getNextType(in);
+		assertThat(type, equalTo("FAKE"));
 	}
 
 	@Test
 	public void testExport() throws IOException {
-		ModExporter out = mock(ModExporter.class);
+		File path = folder.newFile("Record.esp");
+		Mod mod = new Mod("Record.esp", false);
+		MockModExporter out = new MockModExporter(path, mod);
 		record.export(out);
+		out.close();
+		
+		assertThat(out.toByteArray(), equalTo(getExpectedExport()));
+	}
+
+	private byte[] getExpectedExport() {
+		byte[] expected;
+		ByteBuffer buf = ByteBuffer.allocate(512);
+		buf.order(ByteOrder.LITTLE_ENDIAN);
+		for (char c : "FAKE".toCharArray()) {
+			buf.put((byte)c);
+		}
+		buf.putInt(4456);
+		expected = new byte[buf.position()];
+		buf.rewind();
+		buf.get(expected);
+		return expected;
 	}
 
 	@Test
 	public void testGetRecordLength() throws IOException {
-		LImport in = mock(LImport.class);
-		assertEquals(3000, record.getRecordLength(in));
+		LImport in = new LShrinkArray(getExpectedExport());
+		assertEquals(5698, record.getRecordLength(in));
 	}
 
 	@Test
 	public void testExtractRecordData() {
-		LImport in = mock(LImport.class);
+		LImport in = new LShrinkArray(getExpectedExport());
 		LImport temp = record.extractRecordData(in);
+		assertThat(temp.getAllBytes(), equalTo(new byte[0]));
+		throw new RuntimeException("Not implemented yet");
 	}
 
 	@Test
 	public void testExtractData() {
-		LImport in = mock(LImport.class);
+		LImport in = new LShrinkArray(getExpectedExport());
 		LImport temp = record.extractData(in, 1024);
+		throw new RuntimeException("Not implemented yet");
 	}
 
 	@Test
 	public void testGetHeaderLength() {
-		assertEquals(5805, record.getHeaderLength());
+		assertEquals(1242, record.getHeaderLength());
 	}
 
 	@Test
@@ -176,7 +209,7 @@ public class RecordTest {
 
 	@Test
 	public void testGetSizeLength() {
-		assertEquals(4567, record.getSizeLength());
+		assertEquals(4, record.getSizeLength());
 	}
 
 	@Test
@@ -187,7 +220,7 @@ public class RecordTest {
 	@Test
 	public void testGetTotalLength() {
 		ModExporter out = mock(ModExporter.class);
-		assertEquals(10261, record.getTotalLength(out));
+		assertEquals(5698, record.getTotalLength(out));
 	}
 
 	@Test
@@ -199,6 +232,7 @@ public class RecordTest {
 	@Test
 	public void testNewSyncLog() {
 		record.newSyncLog("syncLog");
+		throw new RuntimeException("Not implemented yet");
 	}
 
 	@Test
@@ -209,16 +243,19 @@ public class RecordTest {
 	@Test
 	public void testLogMain() {
 		record.logMain("header", "log");
+		throw new RuntimeException("Not implemented yet");
 	}
 
 	@Test
 	public void testLogSync() {
 		record.logSync("header", "log");
+		throw new RuntimeException("Not implemented yet");
 	}
 
 	@Test
 	public void testLogError() {
 		record.logError("header", "log");
+		throw new RuntimeException("Not implemented yet");
 	}
 
 	enum FooEnum {
@@ -228,27 +265,38 @@ public class RecordTest {
 	@Test
 	public void testLogSpecial() {
 		record.logSpecial(FooEnum.SPECIAL_LOG, "header", "log");
+		throw new RuntimeException("Not implemented yet");
 	}
 
 	@Test
 	public void testLog() {
 		record.log("header", "log");
+		throw new RuntimeException("Not implemented yet");
 	}
 
 	@Test
 	public void testLogMod() {
 		Mod srcMod = mock(Mod.class);
 		Record.logMod(srcMod, "header", "data");
+		throw new RuntimeException("Not implemented yet");
 	}
 
 	@Test
 	public void testNewLog() {
 		record.newLog("newLog");
+		throw new RuntimeException("Not implemented yet");
 	}
 
 	@Test
 	public void testFlush() {
 		record.flush();
+		throw new RuntimeException("Not implemented yet");
+	}
+
+	@Test
+	public void equalsContract() {
+		EqualsVerifier.forClass(Record.class)
+				.verify();
 	}
 
 }

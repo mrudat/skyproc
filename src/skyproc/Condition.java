@@ -9,8 +9,10 @@ import skyproc.genenums.Gender;
 import skyproc.genenums.CrimeType;
 import skyproc.genenums.CastingSource;
 import skyproc.genenums.Axis;
+
 import java.util.HashMap;
 import java.util.Map;
+
 import skyproc.ConditionOption.Cond_Axis;
 import skyproc.ConditionOption.Cond_CastingSource;
 import skyproc.ConditionOption.Cond_CastingSource_FormID;
@@ -36,6 +38,7 @@ import skyproc.EmbeddedScripts.ParamType;
  *
  * @author Justin Swanson
  */
+@SuppressWarnings("serial")
 public class Condition extends SubShell {
 
 	static SubPrototype conditionProto = new SubPrototype() {

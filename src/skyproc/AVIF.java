@@ -11,6 +11,7 @@ import java.util.ArrayList;
  *
  * @author Justin Swanson
  */
+@SuppressWarnings("serial")
 public class AVIF extends MajorRecordDescription {
 
 	// Static prototypes and definitions

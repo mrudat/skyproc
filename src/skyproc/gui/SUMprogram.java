@@ -4,20 +4,52 @@
  */
 package skyproc.gui;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.stream.Collectors;
+
 import javax.imageio.ImageIO;
-import javax.swing.*;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
+
 import lev.Ln;
-import lev.gui.*;
+import lev.gui.LCheckBox;
+import lev.gui.LComboBox;
+import lev.gui.LComponent;
+import lev.gui.LImagePane;
+import lev.gui.LLabel;
+import lev.gui.LNumericSetting;
+import lev.gui.LSaveFile;
+import lev.gui.LScrollPane;
+import lev.gui.LTextArea;
+import skyproc.GRUP_TYPE;
+import skyproc.Mod;
+import skyproc.ModListing;
+import skyproc.NiftyFunc;
+import skyproc.SPGlobal;
 import skyproc.SPGlobal.Language;
-import skyproc.*;
+import skyproc.SUMMergerProgram;
+import skyproc.SkyProcSave;
+import skyproc.SkyProcTester;
 import skyproc.exceptions.BadRecord;
 
 /**
@@ -67,7 +99,9 @@ public class SUMprogram implements SUM {
 			// message box.
 			System.err.println(e.toString());
 			SPGlobal.logException(e);
-			JOptionPane.showMessageDialog(null, "There was an exception thrown during program execution: '" + e + "'  Check the debug logs.");
+			JOptionPane.showMessageDialog(null,
+					"There was an exception thrown during program execution: '"
+							+ e + "'  Check the debug logs.");
 			SPGlobal.closeDebug();
 		}
 	}
@@ -116,10 +150,10 @@ public class SUMprogram implements SUM {
 		exclude.add("SKYPROC.JAR");
 
 		try {
-			BufferedReader in = new BufferedReader(new FileReader("Files/Block Jars.txt"));
+			BufferedReader in = new BufferedReader(new FileReader(
+					"Files/Block Jars.txt"));
 			String read;
-			while (in.ready()) {
-				read = in.readLine();
+			while ((read = in.readLine()) != null) {
 				if (read.indexOf("//") != -1) {
 					read = read.substring(0, read.indexOf("//"));
 				}
@@ -130,7 +164,8 @@ public class SUMprogram implements SUM {
 			}
 			in.close();
 		} catch (IOException ex) {
-			SPGlobal.logError("Block Jars", "Failed to locate or read 'Block Jars.txt'");
+			SPGlobal.logError("Block Jars",
+					"Failed to locate or read 'Block Jars.txt'");
 		}
 	}
 
@@ -155,8 +190,10 @@ public class SUMprogram implements SUM {
 		mmenu.addMenu(optionsMenu, green, false, SUMsave, null);
 
 		try {
-			collapsedSetting = ImageIO.read(SUM.class.getResource("Open Settings Collapsed.png"));
-			openSetting = ImageIO.read(SUM.class.getResource("Open Settings.png"));
+			collapsedSetting = ImageIO.read(SUM.class
+					.getResource("Open Settings Collapsed.png"));
+			openSetting = ImageIO.read(SUM.class
+					.getResource("Open Settings.png"));
 		} catch (IOException ex) {
 			SPGlobal.logException(ex);
 		}
@@ -168,8 +205,13 @@ public class SUMprogram implements SUM {
 				SUMGUI.patchNeededLabel.setText("");
 				SUMGUI.patchNeededLabel.setLocation(-1000, -1000);
 				SUMGUI.forcePatch.setLocation(-1000, -1000);
-				forceAllPatches = new LCheckBox("Force All Patches", SUMGUI.SUMSmallFont, Color.GRAY);
-				forceAllPatches.setLocation(SUMGUI.rightDimensions.x + 10, SUMGUI.cancelPatch.getY() + SUMGUI.cancelPatch.getHeight() / 2 - forceAllPatches.getHeight() / 2);
+				forceAllPatches = new LCheckBox("Force All Patches",
+						SUMGUI.SUMSmallFont, Color.GRAY);
+				forceAllPatches.setLocation(
+						SUMGUI.rightDimensions.x + 10,
+						SUMGUI.cancelPatch.getY()
+								+ SUMGUI.cancelPatch.getHeight() / 2
+								- forceAllPatches.getHeight() / 2);
 				forceAllPatches.setOffset(-4);
 				forceAllPatches.addMouseListener(new MouseListener() {
 					@Override
@@ -186,7 +228,10 @@ public class SUMprogram implements SUM {
 
 					@Override
 					public void mouseEntered(MouseEvent e) {
-						SUMGUI.helpPanel.setContent("This will force each patcher to create a patch, even if " + "it doesn't think it needs to.  Use this if you want to forcibly " + "remake all patches for any reason.");
+						SUMGUI.helpPanel
+								.setContent("This will force each patcher to create a patch, even if "
+										+ "it doesn't think it needs to.  Use this if you want to forcibly "
+										+ "remake all patches for any reason.");
 						SUMGUI.helpPanel.setTitle("Force All Patches");
 						SUMGUI.helpPanel.hideArrow();
 						SUMGUI.helpPanel.setDefaultPos();
@@ -209,7 +254,8 @@ public class SUMprogram implements SUM {
 			try {
 				link.setup();
 				if (last != null) {
-					link.setLocation(link.getX(), last.getY() + last.getHeight() + 15);
+					link.setLocation(link.getX(),
+							last.getY() + last.getHeight() + 15);
 				}
 				last = link;
 				hookMenu.hookMenu.add(link);
@@ -232,7 +278,8 @@ public class SUMprogram implements SUM {
 			blockedLinksArea.setText(text);
 			hookMenu.hookMenu.add(blockedLinksArea);
 		}
-		hookMenu.hookMenu.setPreferredSize(new Dimension(SUMGUI.middleDimensions.width, height + 25));
+		hookMenu.hookMenu.setPreferredSize(new Dimension(
+				SUMGUI.middleDimensions.width, height + 25));
 	}
 
 	void getHooks() {
@@ -241,29 +288,41 @@ public class SUMprogram implements SUM {
 		// Locate classes that implement SUM
 		for (File jar : jars) {
 			try {
-				SPGlobal.logSpecial(SUMlogs.JarHook, "Jar Load", "Loading jar " + jar);
-				ArrayList<Class> classes = Ln.loadClasses(jar, true);
-				for (Class c : classes) {
+				SPGlobal.logSpecial(SUMlogs.JarHook, "Jar Load", "Loading jar "
+						+ jar);
+				ArrayList<Class<?>> classes = Ln
+						.loadClasses(jar, true)
+						.stream()
+						.map(c -> (Class<?>) c)
+						.collect(
+								Collectors
+										.toCollection(ArrayList<Class<?>>::new));
+				for (Class<?> c : classes) {
 					// Skip skyproc or lev classes
-					if (c.toString().contains("lev.") || (c.toString().contains("skyproc."))) {
+					if (c.toString().contains("lev.")
+							|| (c.toString().contains("skyproc."))) {
 						continue;
 					}
 					try {
 						Object tester = c.newInstance();
 						if (tester instanceof SUM) {
-							SPGlobal.logSpecial(SUMlogs.JarHook, "Jar Load", "   Added jar " + jar);
-							PatcherLink newLink = new PatcherLink((SUM) c.newInstance(), jar);
+							SPGlobal.logSpecial(SUMlogs.JarHook, "Jar Load",
+									"   Added jar " + jar);
+							PatcherLink newLink = new PatcherLink(
+									(SUM) c.newInstance(), jar);
 							if (!links.contains(newLink)) {
 								links.add(newLink);
 							}
 							break;
 						}
 					} catch (Throwable ex) {
-						SPGlobal.logSpecial(SUMlogs.JarHook, "Loading class", "   Skipped " + c + ": " + ex.getMessage());
+						SPGlobal.logSpecial(SUMlogs.JarHook, "Loading class",
+								"   Skipped " + c + ": " + ex.getMessage());
 					}
 				}
 			} catch (Throwable ex) {
-				SPGlobal.logSpecial(SUMlogs.JarHook, "Loading jar", "   Skipped jar " + jar + ": " + ex.getMessage());
+				SPGlobal.logSpecial(SUMlogs.JarHook, "Loading jar",
+						"   Skipped jar " + jar + ": " + ex.getMessage());
 			}
 		}
 
@@ -277,11 +336,18 @@ public class SUMprogram implements SUM {
 			} catch (java.lang.AbstractMethodError ex) {
 				links.remove(link);
 				blockedLinks.add(link.path);
-				SPGlobal.logSpecial(SUMlogs.JarHook, "Checking Links", "Removing link " + link.getName() + " because it was an older version of SUM.");
+				SPGlobal.logSpecial(SUMlogs.JarHook, "Checking Links",
+						"Removing link " + link.getName()
+								+ " because it was an older version of SUM.");
 			} catch (UnsupportedOperationException ex) {
 				links.remove(link);
 				blockedLinks.add(link.path);
-				SPGlobal.logSpecial(SUMlogs.JarHook, "Checking Links", "Removing link " + link.getName() + " because it didn't fully implement SUM (Threw a UnsupportedOperationException).");
+				SPGlobal.logSpecial(
+						SUMlogs.JarHook,
+						"Checking Links",
+						"Removing link "
+								+ link.getName()
+								+ " because it didn't fully implement SUM (Threw a UnsupportedOperationException).");
 			}
 		}
 
@@ -292,7 +358,8 @@ public class SUMprogram implements SUM {
 		ArrayList<File> files = Ln.generateFileList(dir, false);
 		ArrayList<File> out = new ArrayList<>();
 		for (File f : files) {
-			if (f.getName().toUpperCase().endsWith(".JAR") && !exclude.contains(f.getName().toUpperCase())) {
+			if (f.getName().toUpperCase().endsWith(".JAR")
+					&& !exclude.contains(f.getName().toUpperCase())) {
 				out.add(f);
 			}
 		}
@@ -337,6 +404,7 @@ public class SUMprogram implements SUM {
 	}
 
 	// Internal Classes
+	@SuppressWarnings("serial")
 	class HookMenu extends SPSettingPanel {
 
 		JPanel hookMenu;
@@ -355,21 +423,24 @@ public class SUMprogram implements SUM {
 			hookMenu.setLayout(null);
 
 			hookMenuScroll = new LScrollPane(hookMenu);
-			hookMenuScroll.setSize(SUMGUI.middleDimensions.width, SUMGUI.middleDimensions.height - scrollOffset);
-			hookMenuScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+			hookMenuScroll.setSize(SUMGUI.middleDimensions.width,
+					SUMGUI.middleDimensions.height - scrollOffset);
+			hookMenuScroll
+					.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 			hookMenuScroll.setLocation(0, scrollOffset);
 			hookMenuScroll.getVerticalScrollBar().setUnitIncrement(20);
 			Add(hookMenuScroll);
 		}
 	}
 
+	@SuppressWarnings("serial")
 	class OptionsMenu extends SPSettingPanel {
 
 		LCheckBox runBoss;
 		LCheckBox mergePatches;
 		LNumericSetting maxMem;
 		LLabel langLabel;
-		LComboBox language;
+		LComboBox<Language> language;
 
 		OptionsMenu(SPMainMenuPanel parent_) {
 			super(parent_, "SUM Options", grey);
@@ -379,10 +450,12 @@ public class SUMprogram implements SUM {
 		protected final void initialize() {
 			super.initialize();
 
-			mergePatches = new LCheckBox("Merge Patches", settingFont, SUMGUI.light);
+			mergePatches = new LCheckBox("Merge Patches", settingFont,
+					SUMGUI.light);
 			mergePatches.setOffset(-3);
 			mergePatches.addShadow();
-			mergePatches.tie(SUMSettings.MERGE_PATCH, SUMsave, SUMGUI.helpPanel, true);
+			mergePatches.tie(SUMSettings.MERGE_PATCH, SUMsave,
+					SUMGUI.helpPanel, true);
 			setPlacement(mergePatches);
 			AddSetting(mergePatches);
 
@@ -393,21 +466,25 @@ public class SUMprogram implements SUM {
 			setPlacement(runBoss);
 			AddSetting(runBoss);
 
-			maxMem = new LNumericSetting("Max Allocated Memory", settingFont, SUMGUI.light, 250, 2000, 250);
+			maxMem = new LNumericSetting("Max Allocated Memory", settingFont,
+					SUMGUI.light, 250, 2000, 250);
 			maxMem.tie(SUMSettings.MAX_MEM, SUMsave, SUMGUI.helpPanel, true);
 			setPlacement(maxMem);
 			AddSetting(maxMem);
 
 			langLabel = new LLabel("Language", settingFont, SUMGUI.light);
-			language = new LComboBox("Language");
+			language = new LComboBox<Language>("Language");
 			language.setSize(150, 25);
-			for (Enum e : SPGlobal.Language.values()) {
+			for (Language e : Language.values()) {
 				language.addItem(e);
 			}
 			language.tie(SUMSettings.LANGUAGE, SUMsave, SUMGUI.helpPanel, true);
 			setPlacement(language, last.x + langLabel.getWidth() + 15, last.y);
 			AddSetting(language);
-			langLabel.setLocation(language.getX() - langLabel.getWidth() - 15, language.getY() + language.getHeight() / 2 - langLabel.getHeight() / 2);
+			langLabel.setLocation(
+					language.getX() - langLabel.getWidth() - 15,
+					language.getY() + language.getHeight() / 2
+							- langLabel.getHeight() / 2);
 			langLabel.addShadow();
 			settingsPanel.add(langLabel);
 
@@ -416,6 +493,7 @@ public class SUMprogram implements SUM {
 		}
 	}
 
+	@SuppressWarnings("serial")
 	class PatcherLink extends LComponent {
 
 		LImagePane logo;
@@ -444,10 +522,12 @@ public class SUMprogram implements SUM {
 			cbox.setSize(cbox.getPreferredSize());
 			cbox.setOpaque(false);
 			cbox.setVisible(true);
-			cbox.setSelected(!SUMsave.getStrings(SUMSettings.DISABLED).contains(getName().toUpperCase()));
+			cbox.setSelected(!SUMsave.getStrings(SUMSettings.DISABLED)
+					.contains(getName().toUpperCase()));
 
 			int desiredMargin = 15;
-			int desiredWidth = SUMGUI.middleDimensions.width - desiredMargin * 2;
+			int desiredWidth = SUMGUI.middleDimensions.width - desiredMargin
+					* 2;
 			int width = cbox.getWidth() + 10;
 
 			if (hook.hasLogo()) {
@@ -464,7 +544,9 @@ public class SUMprogram implements SUM {
 				}
 			}
 			if (logo == null) {
-				title = new LLabel(hook.getName(), SUMGUI.SUMmainFont.deriveFont((float) 25), hook.getHeaderColor());
+				title = new LLabel(hook.getName(),
+						SUMGUI.SUMmainFont.deriveFont((float) 25),
+						hook.getHeaderColor());
 				title.addShadow();
 				using = title;
 				add(title);
@@ -472,13 +554,16 @@ public class SUMprogram implements SUM {
 
 			width += using.getWidth();
 			using.addMouseListener(new LinkClick());
-			cbox.setLocation(desiredMargin, using.getHeight() / 2 - cbox.getHeight() / 2);
+			cbox.setLocation(desiredMargin,
+					using.getHeight() / 2 - cbox.getHeight() / 2);
 			add(cbox);
 			using.setLocation(cbox.getX() + cbox.getWidth() + 10, 0);
 
 			// Add settings
 			setting = new LImagePane(collapsedSetting);
-			setting.setLocation(SUMGUI.middleDimensions.width - 10 - setting.getWidth(), using.getHeight() / 2 - setting.getHeight() / 2);
+			setting.setLocation(
+					SUMGUI.middleDimensions.width - 10 - setting.getWidth(),
+					using.getHeight() / 2 - setting.getHeight() / 2);
 			setting.addMouseListener(new MouseListener() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
@@ -490,7 +575,8 @@ public class SUMprogram implements SUM {
 					args.add(path.getPath());
 					args.add("-NONEW");
 					args.add("-JUSTSETTINGS");
-					NiftyFunc.startProcess(new File(path.getParentFile().getPath() + "\\"), args.toArray(new String[0]));
+					NiftyFunc.startProcess(new File(path.getParentFile()
+							.getPath() + "\\"), args.toArray(new String[0]));
 				}
 
 				@Override
@@ -504,23 +590,27 @@ public class SUMprogram implements SUM {
 				@Override
 				public void mouseEntered(MouseEvent e) {
 					setting.setImage(openSetting);
-					setting.setLocation(SUMGUI.middleDimensions.width - 10 - setting.getWidth(), setting.getY());
+					setting.setLocation(SUMGUI.middleDimensions.width - 10
+							- setting.getWidth(), setting.getY());
 				}
 
 				@Override
 				public void mouseExited(MouseEvent e) {
 					setting.setImage(collapsedSetting);
-					setting.setLocation(SUMGUI.middleDimensions.width - 10 - setting.getWidth(), setting.getY());
+					setting.setLocation(SUMGUI.middleDimensions.width - 10
+							- setting.getWidth(), setting.getY());
 				}
 			});
 			add(setting, 0);
 			if (setting.getY() < 0) {
 				setting.setLocation(setting.getX(), 0);
-				using.setLocation(using.getX(), setting.getHeight() / 2 - using.getHeight() / 2);
+				using.setLocation(using.getX(),
+						setting.getHeight() / 2 - using.getHeight() / 2);
 				using = setting;
 			}
 
-			cbox.setLocation(desiredMargin, using.getHeight() / 2 - cbox.getHeight() / 2);
+			cbox.setLocation(desiredMargin,
+					using.getHeight() / 2 - cbox.getHeight() / 2);
 			setSize(SUMGUI.middleDimensions.width, using.getHeight());
 
 			// Tie to help
@@ -628,14 +718,26 @@ public class SUMprogram implements SUM {
 					"This will merge all of your SkyProc patches into one patch.  "
 							+ "This helps if you're hitting the max number of mods.\n\n"
 							+ "WARNING:  This is an experimental setting.  In addition, existing savegames may break when switching this setting on/off, as all the references the savegame uses to the patches will be broken.  It is recommended you start new savegames when changing this setting.");
-			helpInfo.put(SUMSettings.RUN_BOSS, "SUM will run BOSS before running the patchers to confirm that " + "they are all in the correct load order.  It is highly recommended you leave this setting on.\n\n"
-					+ "NOTE:  Be aware that BOSS reserves the right to change load ordering as it sees fit.  " + "If it adjusts its load order and shuffles SkyProc patchers around "
-					+ "to be in a different order, your savegame may or may not function with the new ordering.  This is " + "most likely to occur if the SkyProc patcher is brand new, and hasn't been processed yet by BOSS.\n\n"
-					+ "SUM does not update BOSS before running it.");
-			helpInfo.put(SUMSettings.MAX_MEM, "This will determine the max amount of megabytes of memory patchers will be allowed to use.\n\n" + "If a patcher runs out of memory the program will essentially halt as it "
-					+ "tries to scrap by with too little memory. " + "If you experience this, then try allocating more memory.\n\n" + "Windows has the final say in how much memory it will allow the programs.  If your request"
-					+ " is denied you'll see an error.  Just lower your memory request and try again.");
-			helpInfo.put(SUMSettings.LANGUAGE, "You can set your preferred language here.  This will make the patchers import strings files of that language first.");
+			helpInfo.put(
+					SUMSettings.RUN_BOSS,
+					"SUM will run BOSS before running the patchers to confirm that "
+							+ "they are all in the correct load order.  It is highly recommended you leave this setting on.\n\n"
+							+ "NOTE:  Be aware that BOSS reserves the right to change load ordering as it sees fit.  "
+							+ "If it adjusts its load order and shuffles SkyProc patchers around "
+							+ "to be in a different order, your savegame may or may not function with the new ordering.  This is "
+							+ "most likely to occur if the SkyProc patcher is brand new, and hasn't been processed yet by BOSS.\n\n"
+							+ "SUM does not update BOSS before running it.");
+			helpInfo.put(
+					SUMSettings.MAX_MEM,
+					"This will determine the max amount of megabytes of memory patchers will be allowed to use.\n\n"
+							+ "If a patcher runs out of memory the program will essentially halt as it "
+							+ "tries to scrap by with too little memory. "
+							+ "If you experience this, then try allocating more memory.\n\n"
+							+ "Windows has the final say in how much memory it will allow the programs.  If your request"
+							+ " is denied you'll see an error.  Just lower your memory request and try again.");
+			helpInfo.put(
+					SUMSettings.LANGUAGE,
+					"You can set your preferred language here.  This will make the patchers import strings files of that language first.");
 		}
 	}
 
@@ -853,9 +955,15 @@ public class SUMprogram implements SUM {
 			args.add("-Xms200m");
 			args.add("-Xmx" + SUMsave.getInt(SUMSettings.MAX_MEM) + "m");
 			args.add(f.getPath());
-			boolean pass = NiftyFunc.startProcess(null, args.toArray(new String[0]));
+			boolean pass = NiftyFunc.startProcess(null,
+					args.toArray(new String[0]));
 			if (!pass) {
-				JOptionPane.showMessageDialog(null, "Could not allocate " + SUMsave.getInt(SUMSettings.MAX_MEM) + " megabytes from the OS.  Lower the amount and try again.");
+				JOptionPane
+						.showMessageDialog(
+								null,
+								"Could not allocate "
+										+ SUMsave.getInt(SUMSettings.MAX_MEM)
+										+ " megabytes from the OS.  Lower the amount and try again.");
 				SPGlobal.logMain("Run Changes", "Mem allocation test failed.");
 				SUMGUI.exitProgram(false, true);
 			}
@@ -884,7 +992,8 @@ public class SUMprogram implements SUM {
 		return activeLinks;
 	}
 
-	void setupLinksForBOSS(ArrayList<PatcherLink> activeLinks) throws IOException, BadRecord {
+	void setupLinksForBOSS(ArrayList<PatcherLink> activeLinks)
+			throws IOException, BadRecord {
 		ArrayList<Mod> active = new ArrayList<>();
 		for (PatcherLink link : activeLinks) {
 			active.add(link.hook.getExportPatch());
@@ -929,10 +1038,12 @@ public class SUMprogram implements SUM {
 			} catch (IOException ex) {
 				listPath = SPGlobal.getPluginsTxt();
 			}
-			ArrayList<String> pluginList = Ln.loadFileToStrings(listPath, false);
+			ArrayList<String> pluginList = Ln
+					.loadFileToStrings(listPath, false);
 			for (String plugin : pluginList) {
 				for (PatcherLink link : unsorted) {
-					if (link.getPatchName().equalsIgnoreCase(plugin.trim()) && !sorted.contains(link)) {
+					if (link.getPatchName().equalsIgnoreCase(plugin.trim())
+							&& !sorted.contains(link)) {
 						sorted.add(link);
 						unsorted.remove(link);
 						break;
@@ -954,15 +1065,21 @@ public class SUMprogram implements SUM {
 			SUMGUI.progress.setStatusNumbered("Running " + link.getName());
 			SPGlobal.logMain("Run Changes", "Running jar: " + link.path);
 			if (!link.isActive()) {
-				SPGlobal.logMain("Run Changes", "Skipped jar because it was not selected: " + link.path);
+				SPGlobal.logMain("Run Changes",
+						"Skipped jar because it was not selected: " + link.path);
 			} else if (runJarPatcher(link)) {
-				SPGlobal.logMain("Run Changes", "Successfully ran jar: " + link.path);
+				SPGlobal.logMain("Run Changes", "Successfully ran jar: "
+						+ link.path);
 			} else {
-				int response = JOptionPane.showConfirmDialog(null, "Failed to properly run " + link.getName() + ".  Continue patching?", "Error", JOptionPane.YES_NO_OPTION);
+				int response = JOptionPane.showConfirmDialog(null,
+						"Failed to properly run " + link.getName()
+								+ ".  Continue patching?", "Error",
+						JOptionPane.YES_NO_OPTION);
 				if (response == JOptionPane.NO_OPTION) {
 					SUMGUI.exitProgram(false, true);
 				}
-				SPGlobal.logMain("Run Changes", "UNsuccessfully ran jar: " + link.path);
+				SPGlobal.logMain("Run Changes", "UNsuccessfully ran jar: "
+						+ link.path);
 			}
 		}
 	}
@@ -979,15 +1096,18 @@ public class SUMprogram implements SUM {
 		args.add("-NOMODSAFTER");
 		args.add("-LANGUAGE");
 		args.add("-" + Language.values()[SUMsave.getInt(SUMSettings.LANGUAGE)]);
-		if (forceAllPatches.isSelected() || SUMsave.getBool(SUMSettings.MERGE_PATCH)) {
+		if (forceAllPatches.isSelected()
+				|| SUMsave.getBool(SUMSettings.MERGE_PATCH)) {
 			args.add("-FORCE");
 		}
 		args.add("-PROGRESSLOCATION");
-		args.add("-" + (SUMGUI.progress.getX() + SUMGUI.progress.getWidth() + 10));
+		args.add("-"
+				+ (SUMGUI.progress.getX() + SUMGUI.progress.getWidth() + 10));
 		args.add("-" + SUMGUI.progress.getY());
 		args.add("-SUMBLOCK");
 		args.add("-NOBOSS");
-		boolean ret = NiftyFunc.startProcess(new File(link.path.getParentFile().getPath() + "\\"), args.toArray(new String[0]));
+		boolean ret = NiftyFunc.startProcess(new File(link.path.getParentFile()
+				.getPath() + "\\"), args.toArray(new String[0]));
 		SUMGUI.progress.incrementBar();
 		return ret;
 	}
