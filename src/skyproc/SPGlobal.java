@@ -110,7 +110,7 @@ public class SPGlobal {
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	public static File getSkyProcDocuments() throws FileNotFoundException,
+	public synchronized static File getSkyProcDocuments() throws FileNotFoundException,
 			IOException {
 		if (skyProcDocuments == null) {
 			File myDocs = SPGlobal.getMyDocumentsSkyrimFolder();

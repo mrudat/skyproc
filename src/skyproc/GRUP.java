@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.zip.DataFormatException;
+
 import lev.LImport;
 import lev.LOutFile;
 import lev.Ln;
@@ -19,6 +20,7 @@ import skyproc.exceptions.BadRecord;
  *            The type of Major Record a GRUP contains.
  * @author Justin Swanson
  */
+@SuppressWarnings("serial")
 public class GRUP<T extends MajorRecord> extends SubRecord implements
 		Iterable<T> {
 

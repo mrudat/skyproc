@@ -173,15 +173,17 @@ public class SPImporter {
 		ArrayList<String> out = new ArrayList<>();
 		if (directory.isDirectory()) {
 			File[] files = directory.listFiles();
-			for (File f : files) {
-				String name = f.getName().toUpperCase();
-				if (name.contains(".ESP") || name.contains(".ESM")) {
-					if (!SPGlobal.modsToSkip.contains(new ModListing(f
-							.getName()))) {
-						out.add(f.getName());
-					} else if (SPGlobal.logging()) {
-						SPGlobal.logSync(header,
-								"Mod was on the list to skip: " + name);
+			if (files != null) {
+				for (File f : files) {
+					String name = f.getName().toUpperCase();
+					if (name.contains(".ESP") || name.contains(".ESM")) {
+						if (!SPGlobal.modsToSkip.contains(new ModListing(f
+								.getName()))) {
+							out.add(f.getName());
+						} else if (SPGlobal.logging()) {
+							SPGlobal.logSync(header,
+									"Mod was on the list to skip: " + name);
+						}
 					}
 				}
 			}

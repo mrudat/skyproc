@@ -10,8 +10,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
@@ -128,7 +126,14 @@ public class SUMGUI extends JFrame {
 	static boolean needsPatching = false;
 	static boolean justPatching = false;
 	static boolean justSettings = false;
+	
+	/**
+	 *  True if we should run BOSS
+	 *  
+	 *  @see skyproc.NiftyFunc#runBOSS(boolean)
+	 */
 	static boolean boss = true;
+	
 	static LCheckBox forcePatch;
 	static LImagePane skyProcLogo;
 	static JTextArea statusUpdate;
@@ -207,16 +212,12 @@ public class SUMGUI extends JFrame {
 			startPatch = new LButton("Patch");
 			startPatch.setLocation(
 					backgroundPanel.getWidth() - startPatch.getWidth() - 5, 5);
-			startPatch.addActionListener(new ActionListener() {
-
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					if (SPGlobal.logging()) {
-						SPGlobal.logMain(header,
-								"Starting patch because user pressed patch.");
-					}
-					closeWindow();
+			startPatch.addActionListener(e -> {
+				if (SPGlobal.logging()) {
+					SPGlobal.logMain(header,
+							"Starting patch because user pressed patch.");
 				}
+				closeWindow();
 			});
 			startPatch.addMouseListener(new MouseListener() {
 
@@ -285,16 +286,12 @@ public class SUMGUI extends JFrame {
 				public void mouseExited(MouseEvent e) {
 				}
 			});
-			cancelPatch.addActionListener(new ActionListener() {
-
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					if (SPGlobal.logging()) {
-						SPGlobal.logMain(header,
-								"Closing program early because user cancelled.");
-					}
-					exitProgram(false, true);
+			cancelPatch.addActionListener(e -> {
+				if (SPGlobal.logging()) {
+					SPGlobal.logMain(header,
+							"Closing program early because user cancelled.");
 				}
+				exitProgram(false, true);
 			});
 			backgroundPanel.add(cancelPatch);
 
@@ -430,65 +427,62 @@ public class SUMGUI extends JFrame {
 		clean();
 
 		SUMGUI.hook = hook;
-		SwingUtilities.invokeLater(new Runnable() {
+		SwingUtilities.invokeLater(() -> {
+			if (singleton != null) {
+				return;
+			}
+			try {
+				if (hook.hasSave()) {
+					hook.getSave().init();
+				}
 
-			@Override
-			public void run() {
-				if (singleton == null) {
-					try {
-						if (hook.hasSave()) {
-							hook.getSave().init();
-						}
+				// SUM save
+				save.init();
 
-						// SUM save
-						save.init();
+				logStatus();
+				SPGlobal.setGlobalPatch(hook.getExportPatch());
 
-						logStatus();
-						SPGlobal.setGlobalPatch(hook.getExportPatch());
+				try {
+					hook.onStart();
+				} catch (Exception ex) {
+					SPGlobal.logException(ex);
+				}
 
-						try {
-							hook.onStart();
-						} catch (Exception ex) {
-							SPGlobal.logException(ex);
-						}
-
-						if (hook.hasCustomMenu()) {
-							singleton = hook.openCustomMenu();
-						} else {
-							singleton = new SUMGUI();
-						}
-						if (hook.hasStandardMenu()) {
-							SPMainMenuPanel menu = hook.getStandardMenu();
-							if (!menu.hasVersion()) {
-								menu.setVersion(hook.getVersion());
-							}
-							singleton.add(menu);
-							if (justSettings) {
-								switchToSettingsMode();
-							}
-						}
-
-						progress.moveToCorrectLocation();
-						if (!justPatching) {
-							progress.setGUIref(singleton);
-						}
-
-						if (justPatching && needsImporting()) {
-							exitRequested = true;
-							progress.open();
-							runThread();
-						} else if (!justPatching && hook.importAtStart()) {
-							runThread();
-						} else if (testNeedsPatching(false)) {
-							setPatchNeeded(true);
-						}
-					} catch (Exception e) {
-						SPGlobal.logException(e);
-						JOptionPane.showMessageDialog(null,
-								"<html>There was an error running the program.<br>"
-										+ "Refer to the debug logs.</html>");
+				if (hook.hasCustomMenu()) {
+					singleton = hook.openCustomMenu();
+				} else {
+					singleton = new SUMGUI();
+				}
+				if (hook.hasStandardMenu()) {
+					SPMainMenuPanel menu = hook.getStandardMenu();
+					if (!menu.hasVersion()) {
+						menu.setVersion(hook.getVersion());
+					}
+					singleton.add(menu);
+					if (justSettings) {
+						switchToSettingsMode();
 					}
 				}
+
+				progress.moveToCorrectLocation();
+				if (!justPatching) {
+					progress.setGUIref(singleton);
+				}
+
+				if (justPatching && needsImporting()) {
+					exitRequested = true;
+					progress.open();
+					runThread();
+				} else if (!justPatching && hook.importAtStart()) {
+					runThread();
+				} else if (testNeedsPatching(false)) {
+					setPatchNeeded(true);
+				}
+			} catch (Exception e) {
+				SPGlobal.logException(e);
+				JOptionPane.showMessageDialog(null,
+						"<html>There was an error running the program.<br>"
+								+ "Refer to the debug logs.</html>");
 			}
 		});
 	}
