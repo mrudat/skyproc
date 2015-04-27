@@ -1,4 +1,4 @@
-ActorValue(actorValues, className, source) ::= <<
+ActorValue(actorValues, className) ::= <<
 package skyproc.genenums;
 
 /**
