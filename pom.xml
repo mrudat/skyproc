@@ -1,0 +1,431 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.bitbucket.DienesToo</groupId>
+    <artifactId>skyproc</artifactId>
+    <version>2.2.0.6-SNAPSHOT</version>
+
+    <name>SkyProc Library</name>
+    <description>Library to generate a Skyrim patch file from existing game data</description>
+    <url>https://bitbucket.org/DienesToo/skyproc-library/</url>
+    <inceptionYear>2013</inceptionYear>
+
+    <developers>
+        <developer>
+            <id>DienesToo</id>
+            <name>David Tynan</name>
+        </developer>
+        <developer>
+            <id>ogerboss</id>
+        </developer>
+    </developers>
+    <contributors>
+        <contributor>
+            <name>Martin Rudat</name>
+            <email>mrudat@gmail.com</email>
+            <url>https://github.com/mrudat/skyproc</url>
+            <properties>
+                <scm.connection>https://github.com/mrudat/skyproc</scm.connection>
+            </properties>
+        </contributor>
+    </contributors>
+
+    <scm>
+        <connection>https://bitbucket.org/DienesToo/skyproc-library.git</connection>
+        <url>https://bitbucket.org/DienesToo/skyproc-library/</url>
+        <tag>master</tag>
+    </scm>
+
+    <issueManagement>
+        <system>bitbucket</system>
+        <url>https://bitbucket.org/DienesToo/skyproc-library/issues</url>
+    </issueManagement>
+
+    <ciManagement />
+
+    <distributionManagement>
+        <downloadUrl>https://bitbucket.org/DienesToo/skyproc-library/downloads</downloadUrl>
+    </distributionManagement>
+
+    <properties>
+        <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
+        <sum.version>1.3.3</sum.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.github.dienes</groupId>
+            <artifactId>lev</artifactId>
+            <version>2014-10-28</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bitbucket.DienesToo</groupId>
+            <artifactId>skyproc.WinRegistry</artifactId>
+            <version>2012-12-30</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <sourceDirectory>src</sourceDirectory>
+
+        <resources>
+            <resource>
+                <targetPath>${project.build.directory}/pom</targetPath>
+                <directory>resources/pom</directory>
+                <filtering>true</filtering>
+            </resource>
+            <resource>
+                <directory>resources/markdown</directory>
+            </resource>
+            <resource>
+                <directory>resources/assembly</directory>
+            </resource>
+        </resources>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.6</version>
+                <executions>
+                    <execution>
+                        <id>default-jar</id>
+                        <configuration>
+                            <excludes>
+                                <exclude>skyproc/gui/SUMprogram.class</exclude>
+                            </excludes>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>SUM</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <archive>
+                                <manifest>
+                                    <mainClass>skyproc.gui.SUMprogram</mainClass>
+                                </manifest>
+                            </archive>
+                            <finalName>SUM-partial</finalName>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.4.2</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <minimizeJar>true</minimizeJar>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <finalName>SUM-partial</finalName>
+                            <outputFile>target/SUM.jar</outputFile>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.10.3</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.4</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <id>extract-properties</id>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <target>
+                                <copy file="nbproject/project.properties"
+                                    tofile="target/version.properties">
+                                    <filterchain>
+                                        <linecontainsregexp>
+                                            <regexp pattern="^version=" />
+                                        </linecontainsregexp>
+                                        <prefixlines prefix="skyproc." />
+                                    </filterchain>
+                                </copy>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <!-- Workaround bug in maven-antrun-plugin -->
+                        <groupId>com.sun</groupId>
+                        <artifactId>tools</artifactId>
+                        <version>1.5.0</version>
+                        <scope>system</scope>
+                        <systemPath>${java.home}/../lib/tools.jar</systemPath>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <quiet>true</quiet>
+                            <files>
+                                <file>target/version.properties</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>2</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <quiet>true</quiet>
+                            <files>
+                                <file>target/version.properties</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>1.4.1</version>
+                <executions>
+                    <execution>
+                        <id>enforce-property</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireProperty>
+                                    <property>skyproc.version</property>
+                                    <message>"Failed to extract version
+                                        number"</message>
+                                    <regex>.*(\d|-SNAPSHOT)$</regex>
+                                    <regexMessage>"Project version must
+                                        end in a number or -SNAPSHOT."</regexMessage>
+                                </requireProperty>
+                            </rules>
+                            <fail>true</fail>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>2.5.2</version>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>install-skyproc</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <pomFile>target/pom/skyproc-pom-template.xml</pomFile>
+                            <file>target/skyproc-${project.version}.jar</file>
+                            <javadoc>target/skyproc-${project.version}-javadoc.jar</javadoc>
+                            <sources>target/skyproc-${project.version}-sources.jar</sources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>install-WinRegistry</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <pomFile>resources/pom/WinRegistry-pom.xml</pomFile>
+                            <file>lib/WinRegistry.jar</file>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>com.ruleoftech</groupId>
+                <artifactId>markdown-page-generator-plugin</artifactId>
+                <version>0.9</version>
+                <configuration>
+                    <inputDirectory>resources/markdown</inputDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.5.3</version>
+                <configuration>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>create-archive</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptor>resources/assembly/mod.xml</descriptor>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <finalName>SUM Program-${sum.version}</finalName>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+
+        <pluginManagement>
+            <plugins>
+                <!--This plugin's configuration is used to store Eclipse 
+                    m2e settings only. It has no influence on the Maven build itself. -->
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>
+                                            org.apache.maven.plugins
+                                        </groupId>
+                                        <artifactId>
+                                            maven-antrun-plugin
+                                        </artifactId>
+                                        <versionRange>
+                                            [1.8,)
+                                        </versionRange>
+                                        <goals>
+                                            <goal>run</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore></ignore>
+                                    </action>
+                                </pluginExecution>
+
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>
+                                            org.apache.maven.plugins
+                                        </groupId>
+                                        <artifactId>
+                                            maven-install-plugin
+                                        </artifactId>
+                                        <versionRange>
+                                            [2.5.2,)
+                                        </versionRange>
+                                        <goals>
+                                            <goal>install-file</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <execute>
+                                            <runOnConfiguration></runOnConfiguration>
+                                        </execute>
+                                    </action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>
+                                            com.ruleoftech
+                                        </groupId>
+                                        <artifactId>
+                                            markdown-page-generator-plugin
+                                        </artifactId>
+                                        <versionRange>
+                                            [0.9,)
+                                        </versionRange>
+                                        <goals>
+                                            <goal>generate</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <execute>
+                                            <runOnIncremental></runOnIncremental>
+                                        </execute>
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+</project>

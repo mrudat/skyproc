@@ -6,3 +6,14 @@
 /Files/
 /SkyProcDebug/
 /store/
+
+# Maven
+/target/
+
+# Eclipse project (wholly derived from maven configuration)
+.project
+.classpath
+.settings
+
+# eclipse markdown preview plugin
+resources/markdown/.*.md.html
